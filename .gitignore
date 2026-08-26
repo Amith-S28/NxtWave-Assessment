@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment & Secrets
+.env
+*.env.local
+
+# Databases & Runtime Output
+data/*.db
+data/runs/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Output directory: ignore runtime outputs but keep reference deliverables
+output/*
+!output/lesson_Introduction_to_RAG_reference.md
+!output/rejection_log_Introduction_to_RAG_reference.json
