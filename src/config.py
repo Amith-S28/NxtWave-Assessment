@@ -18,7 +18,7 @@ GEMINI_API_KEY = GOOGLE_API_KEY
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 
 DEFAULT_PROVIDER = os.getenv("DEFAULT_PROVIDER", "gemini").lower()
-MODEL_NAME = os.getenv("MODEL_NAME", "gemini-2.5-flash")
+MODEL_NAME = os.getenv("MODEL_NAME", "gemini-3.6-flash")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", MODEL_NAME)
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o")
 

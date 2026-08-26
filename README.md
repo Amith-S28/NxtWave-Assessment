@@ -27,21 +27,6 @@ This system implements a **self-evaluating agentic loop**:
 
 ![System Architecture](assets/diagrams/system-architecture.svg)
 
-```mermaid
-graph TD
-    A["🚀 START: Input Topic"] --> B["🧠 Load Memory & Evolved Rules (SQLite)"]
-    B --> C["✍️ GENERATE Lesson (3-Layer Prompt)"]
-    C --> D["📊 EVALUATE (7 Independent Rubric Checkpoints)"]
-    D --> E{"All 7 Checkpoints Pass?"}
-    E -->|✅ Yes| F["💾 Persist Success & Evolved Rules"]
-    E -->|❌ No & retries < max| G["🔄 REGENERATE with Structured Diagnostic Feedback"]
-    G --> D
-    E -->|❌ No & retries >= max| H["⚠️ Persist Best Attempt & Rejection Log"]
-    F --> I["📄 Final Deliverables: Markdown Lesson + JSON Rejection Log"]
-    H --> I
-    I --> J["🏁 END"]
-```
-
 ### Architectural Decisions & Trade-Offs
 
 | Decision | Why This Approach | Deliberate Alternative Avoided |
@@ -162,7 +147,7 @@ Edit `.env` and paste your API key:
 ```env
 GEMINI_API_KEY=AIzaSy...your_gemini_api_key_here...
 DEFAULT_PROVIDER=gemini
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-3.6-flash
 MAX_RETRIES=2
 ```
 
