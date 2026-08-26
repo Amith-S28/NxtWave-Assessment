@@ -47,11 +47,14 @@ class GeminiClient(LLMClient):
         self.model = model or Config.GEMINI_MODEL
         self.fallback_models = [
             self.model,
-            "gemini-2.5-flash-lite",
             "gemini-3.5-flash-lite",
             "gemini-3.5-flash",
+            "gemini-3.1-flash-lite",
             "gemini-3.6-flash",
+            "gemini-3.7-flash",
         ]
+        # Deduplicate while preserving order
+        self.fallback_models = list(dict.fromkeys(self.fallback_models))
         from google import genai
         self.client = genai.Client(api_key=self.api_key)
 

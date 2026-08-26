@@ -29,46 +29,82 @@ def evaluator_node(
     failed_checkpoints: List[str] = []
     feedback_lines: List[str] = []
 
-    for idx, cp in enumerate(RUBRIC_CHECKPOINTS, 1):
-        eval_prompt = build_checkpoint_evaluation_prompt(cp, lesson_text)
-        
-        try:
-            eval_output = client.generate_structured(
-                prompt=eval_prompt,
-                response_schema=CheckpointEvaluation,
-                system_instruction=EVALUATOR_SYSTEM_PROMPT,
-                temperature=0.0,
-            )
+    # Fast Single-Call Batched Evaluation (evaluates all 7 gates in 1 shot)
+    from src.rubric.schemas import EvaluationResult
+    from src.prompts.evaluator_prompts import build_all_checkpoints_evaluation_prompt
+
+    batched_prompt = build_all_checkpoints_evaluation_prompt(lesson_text, attempt_number=attempt)
+    try:
+        eval_result: EvaluationResult = client.generate_structured(
+            prompt=batched_prompt,
+            response_schema=EvaluationResult,
+            system_instruction=EVALUATOR_SYSTEM_PROMPT,
+            temperature=0.0,
+        )
+
+        for cp_res in eval_result.checkpoints:
+            # Match with standard checkpoint definition dimension
+            dim = "Pedagogy"
+            for c_def in RUBRIC_CHECKPOINTS:
+                if c_def.name.lower() in cp_res.checkpoint_name.lower() or cp_res.checkpoint_name.lower() in c_def.name.lower():
+                    dim = c_def.dimension
+                    break
+
             result_dict = {
-                "checkpoint_name": cp.name,
-                "dimension": cp.dimension,
-                "passed": bool(eval_output.passed),
-                "reasoning": eval_output.reasoning,
-                "suggestion": eval_output.suggestion or "",
+                "checkpoint_name": cp_res.checkpoint_name,
+                "dimension": dim,
+                "passed": bool(cp_res.passed),
+                "reasoning": cp_res.reasoning,
+                "suggestion": cp_res.suggestion or "",
             }
-        except Exception as e:
-            logger.warning(f"Structured eval fallback for {cp.name}: {e}")
-            result_dict = {
-                "checkpoint_name": cp.name,
-                "dimension": cp.dimension,
-                "passed": False,
-                "reasoning": f"Evaluation error: {str(e)}",
-                "suggestion": "Re-verify this dimension carefully.",
-            }
+            rubric_results.append(result_dict)
 
-        rubric_results.append(result_dict)
+            if not result_dict["passed"]:
+                failed_checkpoints.append(cp_res.checkpoint_name)
+                feedback_lines.append(
+                    f"- [{cp_res.checkpoint_name}] FAILED: {result_dict['reasoning']}\n"
+                    f"  ACTIONABLE FIX: {result_dict['suggestion']}"
+                )
 
-        if not result_dict["passed"]:
-            failed_checkpoints.append(cp.name)
-            feedback_lines.append(
-                f"- [{cp.name}] FAILED: {result_dict['reasoning']}\n"
-                f"  ACTIONABLE FIX: {result_dict['suggestion']}"
-            )
+    except Exception as batch_err:
+        logger.warning(f"Batched evaluation error: {batch_err}. Falling back to sequential evaluation...")
+        rubric_results = []
+        failed_checkpoints = []
+        feedback_lines = []
 
-        # Gentle pacing between evaluator calls to respect free-tier RPM burst quotas
-        if idx < len(RUBRIC_CHECKPOINTS):
-            import time
-            time.sleep(1.0)
+        for idx, cp in enumerate(RUBRIC_CHECKPOINTS, 1):
+            eval_prompt = build_checkpoint_evaluation_prompt(cp, lesson_text)
+            try:
+                eval_output = client.generate_structured(
+                    prompt=eval_prompt,
+                    response_schema=CheckpointEvaluation,
+                    system_instruction=EVALUATOR_SYSTEM_PROMPT,
+                    temperature=0.0,
+                )
+                result_dict = {
+                    "checkpoint_name": cp.name,
+                    "dimension": cp.dimension,
+                    "passed": bool(eval_output.passed),
+                    "reasoning": eval_output.reasoning,
+                    "suggestion": eval_output.suggestion or "",
+                }
+            except Exception as e:
+                logger.warning(f"Sequential eval fallback for {cp.name}: {e}")
+                result_dict = {
+                    "checkpoint_name": cp.name,
+                    "dimension": cp.dimension,
+                    "passed": False,
+                    "reasoning": f"Evaluation error: {str(e)}",
+                    "suggestion": "Re-verify this dimension carefully.",
+                }
+
+            rubric_results.append(result_dict)
+            if not result_dict["passed"]:
+                failed_checkpoints.append(cp.name)
+                feedback_lines.append(
+                    f"- [{cp.name}] FAILED: {result_dict['reasoning']}\n"
+                    f"  ACTIONABLE FIX: {result_dict['suggestion']}"
+                )
 
     all_passed = len(failed_checkpoints) == 0
 

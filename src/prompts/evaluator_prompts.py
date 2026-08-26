@@ -42,3 +42,43 @@ Provide your evaluation adhering to the following JSON schema:
 - reasoning: Step-by-step chain of thought analyzing the lesson against the pass criteria and fail signals.
 - suggestion: Clear and actionable instructions to fix the issue if failed (or empty string if passed).
 """
+
+
+def build_all_checkpoints_evaluation_prompt(lesson_text: str, attempt_number: int = 1) -> str:
+    """Build a comprehensive batched prompt to evaluate all 7 rubric checkpoints in a single LLM call."""
+    from src.rubric.checkpoints import RUBRIC_CHECKPOINTS
+
+    checkpoints_block = []
+    for idx, cp in enumerate(RUBRIC_CHECKPOINTS, 1):
+        checkpoints_block.append(
+            f"--- CHECKPOINT {idx}: {cp.name} ({cp.dimension}) ---\n"
+            f"Description: {cp.description}\n\n"
+            f"Pass Criteria:\n{cp.pass_criteria}\n\n"
+            f"Fail Signals:\n{cp.fail_signals}\n\n"
+            f"Instructions:\n{cp.evaluation_prompt_instructions}\n"
+        )
+    checkpoints_text = "\n".join(checkpoints_block)
+
+    return f"""Please evaluate the candidate lesson below against ALL 7 of the following hard pass/fail rubric checkpoints.
+
+============================================================
+THE 7 RUBRIC CHECKPOINTS TO EVALUATE:
+============================================================
+{checkpoints_text}
+
+============================================================
+CANDIDATE LESSON TEXT TO EVALUATE (Attempt #{attempt_number}):
+============================================================
+{lesson_text}
+============================================================
+
+Evaluate EVERY single checkpoint independently and return an EvaluationResult with:
+- attempt_number: {attempt_number}
+- checkpoints: List of 7 CheckpointEvaluation objects (one for each checkpoint in exact order), each with:
+  - checkpoint_name: Exact name of the checkpoint
+  - passed: true or false (binary gate, zero partial credit)
+  - reasoning: Specific evidence and chain-of-thought analysis
+  - suggestion: Concrete actionable fix if failed, or empty string if passed
+- all_passed: true ONLY if all 7 checkpoints passed (false if even 1 failed)
+- summary: A concise 1-line verdict of the evaluation
+"""
