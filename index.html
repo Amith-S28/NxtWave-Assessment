@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NxtWave Content Systems — Self-Evaluating Content Generator</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ==========================================================================
+       1. Design Tokens (CSS Variables) - Editorial Dark & Warm Light
+       ========================================================================== */
+    :root {
+      --font-display: 'Instrument Serif', Georgia, serif;
+      --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'Geist Mono', 'SFMono-Regular', Consolas, monospace;
+
+      /* Dark Theme (Default) */
+      --bg-canvas: #090d16;
+      --bg-subtle: #0f1523;
+      --bg-card: #141c2e;
+      --bg-card-hover: #1a243a;
+      --bg-elevated: #1e2a42;
+      
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      
+      --accent-coral: #eb6c36;
+      --accent-coral-glow: rgba(235, 108, 54, 0.25);
+      --accent-coral-tint: rgba(235, 108, 54, 0.10);
+      
+      --accent-blue: #38bdf8;
+      --accent-blue-tint: rgba(56, 189, 248, 0.10);
+      
+      --accent-green: #34d399;
+      --accent-green-tint: rgba(52, 211, 153, 0.10);
+      
+      --accent-amber: #fbbf24;
+      --accent-amber-tint: rgba(251, 191, 36, 0.10);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 30px rgba(235, 108, 54, 0.15);
+
+      --transition-spring: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-canvas: #f8fafc;
+      --bg-subtle: #f1f5f9;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --bg-elevated: #ffffff;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      
+      --border-subtle: rgba(15, 23, 42, 0.08);
+      --border-strong: rgba(15, 23, 42, 0.16);
+      
+      --accent-coral: #ea580c;
+      --accent-coral-glow: rgba(234, 88, 12, 0.20);
+      --accent-coral-tint: rgba(234, 88, 12, 0.08);
+      
+      --accent-blue: #0284c7;
+      --accent-blue-tint: rgba(2, 132, 199, 0.08);
+      
+      --accent-green: #059669;
+      --accent-green-tint: rgba(5, 150, 105, 0.08);
+      
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+      --shadow-glow: 0 0 30px rgba(234, 88, 12, 0.12);
+    }
+
+    /* ==========================================================================
+       2. Global Reset & Base Styles
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      background-color: var(--bg-canvas);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    ::selection {
+      background-color: var(--accent-coral);
+      color: #ffffff;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ==========================================================================
+       3. Navigation Header
+       ========================================================================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      background: rgba(9, 13, 22, 0.75);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.3s ease;
+    }
+    [data-theme="light"] .navbar {
+      background: rgba(248, 250, 252, 0.85);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+    }
+
+    .brand-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #eb6c36, #d9480f);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.15rem;
+      box-shadow: 0 2px 10px var(--accent-coral-glow);
+    }
+
+    .brand-title {
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .brand-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: var(--transition-spring);
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: var(--transition-spring);
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--accent-coral);
+      color: #ffffff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: var(--transition-spring);
+      box-shadow: 0 2px 12px var(--accent-coral-glow);
+    }
+
+    .btn-primary:hover {
+      background: #ff7843;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px var(--accent-coral-glow);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: var(--transition-spring);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       4. Hero Section
+       ========================================================================== */
+    .hero-section {
+      padding: 5rem 0 3.5rem;
+      position: relative;
+    }
+
+    .hero-eyebrow-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--radius-full);
+      background: var(--accent-coral-tint);
+      border: 1px solid rgba(235, 108, 54, 0.3);
+      color: var(--accent-coral);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-coral);
+      box-shadow: 0 0 8px var(--accent-coral);
+      animation: pulseAnimation 2s infinite;
+    }
+
+    @keyframes pulseAnimation {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.75rem, 5vw, 4.25rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.25rem;
+      color: var(--text-primary);
+      max-width: 900px;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--accent-coral);
+    }
+
+    .hero-description {
+      font-size: 1.15rem;
+      color: var(--text-secondary);
+      max-width: 760px;
+      line-height: 1.65;
+      margin-bottom: 2.5rem;
+    }
+
+    /* KPI Highlights Grid */
+    .hero-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      transition: var(--transition-spring);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-value {
+      font-family: var(--font-mono);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent-coral);
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .kpi-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ==========================================================================
+       5. Section Container & Headers
+       ========================================================================== */
+    .section-block {
+      padding: 4.5rem 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .section-header {
+      margin-bottom: 2.75rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-coral);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 680px;
+    }
+
+    /* ==========================================================================
+       6. Interactive Pipeline Playground Studio
+       ========================================================================== */
+    .playground-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .playground-header {
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.25rem 1.75rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .playground-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .topic-select {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-md);
+      outline: none;
+      cursor: pointer;
+      transition: var(--transition-spring);
+    }
+
+    .topic-select:focus {
+      border-color: var(--accent-coral);
+    }
+
+    .toggle-switch-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      user-select: none;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      transition: var(--transition-spring);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: #ffffff;
+      border-radius: 50%;
+      transition: var(--transition-spring);
+    }
+
+    input[type="checkbox"]:checked + .toggle-switch {
+      background: var(--accent-coral);
+      border-color: var(--accent-coral);
+    }
+
+    input[type="checkbox"]:checked + .toggle-switch::after {
+      transform: translateX(18px);
+    }
+
+    .playground-body {
+      padding: 1.75rem;
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      gap: 1.75rem;
+    }
+
+    @media (max-width: 960px) {
+      .playground-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Pipeline Step Tracker */
+    .pipeline-stepper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.875rem;
+    }
+
+    .step-node-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      transition: var(--transition-spring);
+      position: relative;
+    }
+
+    .step-node-item.active {
+      border-color: var(--accent-coral);
+      background: var(--accent-coral-tint);
+      transform: translateX(4px);
+    }
+
+    .step-node-item.completed {
+      border-color: rgba(52, 211, 153, 0.4);
+      background: var(--accent-green-tint);
+    }
+
+    .step-node-item.failed {
+      border-color: rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .step-icon-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      flex-shrink: 0;
+      transition: var(--transition-spring);
+    }
+
+    .step-node-item.active .step-icon-badge {
+      background: var(--accent-coral);
+      color: #ffffff;
+      box-shadow: 0 0 10px var(--accent-coral-glow);
+    }
+
+    .step-node-item.completed .step-icon-badge {
+      background: var(--accent-green);
+      color: #ffffff;
+    }
+
+    .step-node-item.failed .step-icon-badge {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    .step-info {
+      flex: 1;
+    }
+
+    .step-title {
+      font-size: 0.925rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.2rem;
+    }
+
+    .step-subtitle {
+      font-size: 0.785rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Terminal Console Live Stream */
+    .terminal-console {
+      background: #080c14;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      height: 480px;
+      overflow: hidden;
+    }
+
+    .terminal-header {
+      background: #0f1523;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #eab308; }
+    .dot-green { background: #22c55e; }
+
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .terminal-screen {
+      padding: 1.25rem;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+      flex: 1;
+    }
+
+    .log-line {
+      margin-bottom: 0.4rem;
+      word-break: break-all;
+    }
+    .log-info { color: #38bdf8; }
+    .log-success { color: #34d399; }
+    .log-warn { color: #fbbf24; }
+    .log-error { color: #f87171; }
+    .log-coral { color: #eb6c36; font-weight: 600; }
+
+    /* ==========================================================================
+       7. 7-Dimension Hard Rubric Grid
+       ========================================================================== */
+    .rubric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .rubric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      transition: var(--transition-spring);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .rubric-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .rubric-card.focal-card {
+      border-color: rgba(235, 108, 54, 0.4);
+      background: linear-gradient(180deg, var(--bg-card), rgba(235, 108, 54, 0.04));
+    }
+
+    .rubric-card.focal-card:hover {
+      border-color: var(--accent-coral);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .rubric-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .rubric-number {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-coral);
+      background: var(--accent-coral-tint);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .rubric-dimension {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .rubric-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.6rem;
+    }
+
+    .rubric-pass-rule {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .rubric-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.85rem;
+    }
+
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 0.725rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .badge-pass {
+      background: var(--accent-green-tint);
+      color: var(--accent-green);
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .badge-fail {
+      background: rgba(239, 68, 68, 0.1);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* ==========================================================================
+       8. Golden Lesson Reader Mode
+       ========================================================================== */
+    .reader-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .reader-top-bar {
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.25rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .reader-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .reader-content {
+      padding: 3rem clamp(1.5rem, 5vw, 4.5rem);
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .reader-h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 400;
+      color: var(--text-primary);
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+
+    .reader-lead {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 2.25rem;
+    }
+
+    .reader-h2 {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin: 2.5rem 0 1rem;
+    }
+
+    .reader-p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      margin-bottom: 1.25rem;
+    }
+
+    .callout-box {
+      background: var(--accent-coral-tint);
+      border-left: 4px solid var(--accent-coral);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      padding: 1.25rem 1.5rem;
+      margin: 1.75rem 0;
+    }
+
+    .callout-title {
+      font-weight: 600;
+      color: var(--accent-coral);
+      font-size: 0.95rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .callout-body {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .analogy-comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-size: 0.9rem;
+    }
+
+    .analogy-comparison-table th,
+    .analogy-comparison-table td {
+      padding: 0.85rem 1.25rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .analogy-comparison-table th {
+      background: var(--bg-subtle);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    /* ==========================================================================
+       9. Architecture & Diagram Visualizer Tab Section
+       ========================================================================== */
+    .diagram-tab-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tab-btn {
+      padding: 0.65rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: var(--transition-spring);
+    }
+
+    .tab-btn.active {
+      background: var(--accent-coral-tint);
+      border-color: var(--accent-coral);
+      color: var(--accent-coral);
+      font-weight: 600;
+    }
+
+    .diagram-display-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    .diagram-img-frame {
+      width: 100%;
+      background: #f5f5f5;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .diagram-img-frame img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ==========================================================================
+       10. Floating Tweaks Customizer Panel
+       ========================================================================== */
+    .tweaks-toggle-btn {
+      position: fixed;
+      bottom: 1.75rem;
+      right: 1.75rem;
+      z-index: 999;
+      background: var(--accent-coral);
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-full);
+      box-shadow: 0 4px 20px var(--accent-coral-glow);
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition-spring);
+    }
+
+    .tweaks-toggle-btn:hover {
+      transform: scale(1.05);
+      background: #ff7843;
+    }
+
+    .tweaks-panel {
+      position: fixed;
+      bottom: 5.5rem;
+      right: 1.75rem;
+      width: 320px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-lg);
+      z-index: 998;
+      display: none;
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .tweaks-panel.open {
+      display: block;
+    }
+
+    .tweaks-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+    }
+
+    .tweaks-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .tweaks-control-row {
+      margin-bottom: 1rem;
+    }
+
+    .tweaks-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      display: block;
+      font-family: var(--font-mono);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 3.5rem 0;
+      margin-top: 4rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. NAVIGATION -->
+  <nav class="navbar">
+    <div class="container nav-inner">
+      <div class="brand-group">
+        <div class="brand-badge">N</div>
+        <div>
+          <div class="brand-title">NxtWave Content Systems</div>
+          <div class="brand-subtitle">GenAI Agentic Engineering</div>
+        </div>
+      </div>
+
+      <ul class="nav-links">
+        <li><a href="#playground" class="nav-link">Live Playground</a></li>
+        <li><a href="#rubric" class="nav-link">7-Checkpoint Rubric</a></li>
+        <li><a href="#lesson" class="nav-link">Lesson Reader</a></li>
+        <li><a href="#architecture" class="nav-link">Architecture</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
+        <a href="#playground" class="btn-primary">Test Live Agent</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 2. HERO SECTION -->
+  <header class="hero-section">
+    <div class="container">
+      <div class="hero-eyebrow-chip">
+        <span class="pulse-dot"></span>
+        <span>LangGraph Stateful Loop • SQLite Self-Evolution</span>
+      </div>
+
+      <h1 class="hero-title">
+        The Self-Evaluating <em>AI Content Engine.</em>
+      </h1>
+
+      <p class="hero-description">
+        An autonomous agentic content generation pipeline built for 12th-grade learners from non-English-medium backgrounds. Evaluates lessons against a strict 7-dimension hard pass/fail rubric and continuously evolves across runs.
+      </p>
+
+      <div class="hero-kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-value">7 / 7</div>
+          <div class="kpi-label">Hard Binary Gates</div>
+          <div class="kpi-desc">Strict pass/fail grading with zero partial credit or criterion conflation.</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-value">12th Grade</div>
+          <div class="kpi-label">Learner Persona</div>
+          <div class="kpi-desc">Calibrated for Indian learners with foundational English and zero prior AI knowledge.</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-value">0% Jargon</div>
+          <div class="kpi-label">Plain-English Mandate</div>
+          <div class="kpi-desc">Every technical term (LLM, Vector DB, Embeddings) defined clearly on first use.</div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-value">100% Evolved</div>
+          <div class="kpi-label">SQLite Memory</div>
+          <div class="kpi-desc">Distills run failures into permanent prompt guidelines that prevent future errors.</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 3. INTERACTIVE PLAYGROUND STUDIO -->
+  <section class="section-block" id="playground">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Interactive Simulation Studio</div>
+        <h2 class="section-heading">Test the Agentic Pipeline Live</h2>
+        <p class="section-subtitle">
+          Watch the state machine generate content, trigger 7 independent evaluator LLM calls, diagnose issues, and dynamically self-correct.
+        </p>
+      </div>
+
+      <div class="playground-box">
+        <div class="playground-header">
+          <div class="playground-controls">
+            <select class="topic-select" id="simTopic">
+              <option value="RAG">Topic: Introduction to RAG (Retrieval-Augmented Generation)</option>
+              <option value="VECTOR_DB">Topic: What is a Vector Database?</option>
+              <option value="PROMPTS">Topic: Prompt Engineering for Beginners</option>
+            </select>
+
+            <label class="toggle-switch-label">
+              <input type="checkbox" id="injectErrorToggle" style="display:none;">
+              <span class="toggle-switch"></span>
+              <span>Inject Deliberate Factual Error (Demo Mode)</span>
+            </label>
+          </div>
+
+          <button class="btn-primary" id="runSimulationBtn">
+            <span>▶</span> Run Agentic Pipeline
+          </button>
+        </div>
+
+        <div class="playground-body">
+          <!-- Step Sequence Tracker -->
+          <div class="pipeline-stepper">
+            <div class="step-node-item" id="step1">
+              <div class="step-icon-badge">1</div>
+              <div class="step-info">
+                <div class="step-title">Load Memory &amp; Evolved Rules</div>
+                <div class="step-subtitle">Query SQLite data/memory.db for past failure patterns</div>
+              </div>
+            </div>
+
+            <div class="step-node-item" id="step2">
+              <div class="step-icon-badge">2</div>
+              <div class="step-info">
+                <div class="step-title">Generate Candidate Lesson</div>
+                <div class="step-subtitle">3-Layer Dynamic Prompt (Base Persona + Memory + Diagnostics)</div>
+              </div>
+            </div>
+
+            <div class="step-node-item" id="step3">
+              <div class="step-icon-badge">3</div>
+              <div class="step-info">
+                <div class="step-title">7-Checkpoint Rubric Evaluation</div>
+                <div class="step-subtitle">7 Isolated LLM calls with Chain-of-Thought JSON validation</div>
+              </div>
+            </div>
+
+            <div class="step-node-item" id="step4">
+              <div class="step-icon-badge">4</div>
+              <div class="step-info">
+                <div class="step-title">LangGraph Conditional Router</div>
+                <div class="step-subtitle">Verify: Did all 7 gates pass? (If failed &rarr; Trigger Retry)</div>
+              </div>
+            </div>
+
+            <div class="step-node-item" id="step5">
+              <div class="step-icon-badge">5</div>
+              <div class="step-info">
+                <div class="step-title">Persist Memory &amp; Ship Deliverables</div>
+                <div class="step-subtitle">Export lesson markdown + JSON rejection audit log</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Terminal Output Screen -->
+          <div class="terminal-console">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <div class="terminal-title">agentic_execution_stream.log</div>
+              <div style="font-size:0.75rem; color:#64748b;">LangGraph 1.2</div>
+            </div>
+            <div class="terminal-screen" id="terminalScreen">
+              <div class="log-line log-info">System idle. Select parameters and click 'Run Agentic Pipeline' to initiate live generation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. THE 7-DIMENSION RUBRIC MATRIX -->
+  <section class="section-block" id="rubric">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Quality Assurance Standard</div>
+        <h2 class="section-heading">The 7 Hard Pass/Fail Checkpoints</h2>
+        <p class="section-subtitle">
+          Every lesson must clear all 7 binary gates before being shipped. There is zero partial credit or scoring averaging.
+        </p>
+      </div>
+
+      <div class="rubric-grid">
+        <!-- 1. Accuracy -->
+        <div class="rubric-card">
+          <div class="rubric-card-header">
+            <span class="rubric-number">01</span>
+            <span class="rubric-dimension">Accuracy</span>
+          </div>
+          <h3 class="rubric-title">Factual Accuracy &amp; Grounding</h3>
+          <p class="rubric-pass-rule">
+            Must describe RAG as an inference-time lookup mechanism. Strictly clarifies that RAG does NOT retrain or alter model weights.
+          </p>
+          <div class="rubric-badges">
+            <span class="badge badge-pass">PASS: Inference Lookup</span>
+            <span class="badge badge-fail">FAIL: "Trains the Model"</span>
+          </div>
+        </div>
+
+        <!-- 2. Completeness -->
+        <div class="rubric-card">
+          <div class="rubric-card-header">
+            <span class="rubric-number">02</span>
+            <span class="rubric-dimension">Completeness</span>
+          </div>
+          <h3 class="rubric-title">Completeness — Core Pillars</h3>
+          <p class="rubric-pass-rule">
+            Explains all 3 essential pillars: What it is, Why it is needed (hallucinations, static cutoff, private data), and How it works (Retrieve &rarr; Augment &rarr; Generate).
+          </p>
+          <div class="rubric-badges">
+            <span class="badge badge-pass">PASS: What + Why + How</span>
+            <span class="badge badge-fail">FAIL: Skips Retrieval Flow</span>
+          </div>
+        </div>
+
+        <!-- 3. Beginner Language -->
+        <div class="rubric-card">
+          <div class="rubric-card-header">
+            <span class="rubric-number">03</span>
+            <span class="rubric-dimension">Accessibility</span>
+          </div>
+          <h3 class="rubric-title">Beginner-Friendly Language</h3>
+          <p class="rubric-pass-rule">
+            Short sentences (&lt;20 words), conversational Indian English tone. Zero high-GRE academic words (e.g. ubiquitous, paradigmatic).
+          </p>
+          <div class="rubric-badges">
+            <span class="badge badge-pass">PASS: Foundational Vocab</span>
+            <span class="badge badge-fail">FAIL: GRE / Academic Dense</span>
+          </div>
+        </div>
+
+        <!-- 4. Concrete Example (Focal) -->
+        <div class="rubric-card focal-card">
+          <div class="rubric-card-header">
+            <span class="rubric-number">04</span>
+            <span class="rubric-dimension">Pedagogy</span>
+          </div>
+          <h3 class="rubric-title">Teaches by Concrete Example &amp; Analogy</h3>
+          <p class="rubric-pass-rule">
+            Includes a relatable everyday analogy (Open-Book Exam vs Closed-Book Exam) and a step-by-step worked scenario (Indian college admission lookup).
+          </p>
+          <div class="rubric-badges">
+            <span class="badge badge-pass">PASS: Open-Book Exam Analogy</span>
+            <span class="badge badge-fail">FAIL: Abstract Theory Only</span>
+          </div>
+        </div>
+
+        <!-- 5. Zero Jargon -->
+        <div class="rubric-card">
+          <div class="rubric-card-header">
+            <span class="rubric-number">05</span>
+            <span class="rubric-dimension">Clarity</span>
+          </div>
+          <h3 class="rubric-title">Clear, No Unexplained Jargon</h3>
+          <p class="rubric-pass-rule">
+            Every technical term (LLM, Embeddings, Vector DB, Prompt) is defined in plain conversational words immediately upon first use.
+          </p>
+          <div class="rubric-badges">
+            <span class="badge badge-pass">PASS: Defined on First Use</span>
+            <span class="badge badge-fail">FAIL: Orphan Jargon</span>
+          </div>
+        </div>
+
+        <!-- 6. Coherent Flow -->
+        <div class="rubric-card">
+          <div class="rubric-card-header">
+            <span class="rubric-number">06</span>
+            <span class="rubric-dimension">Structure</span>
+          </div>
+          <h3 class="rubric-title">Coherent Teaching Flow</h3>
+          <p class="rubric-pass-rule">
+            Scaffolds learning logically: Hook &rarr; Definition &rarr; Analogy &rarr; 3-Step Pipeline &rarr; Worked Example &rarr; Summary &amp; Glossary.
+          </p>
+          <div class="rubric-badges">
+            <span class="badge badge-pass">PASS: Logical Scaffolding</span>
+            <span class="badge badge-fail">FAIL: Disjointed Jump</span>
+          </div>
+        </div>
+
+        <!-- 7. Structural Density -->
+        <div class="rubric-card">
+          <div class="rubric-card-header">
+            <span class="rubric-number">07</span>
+            <span class="rubric-dimension">Format</span>
+          </div>
+          <h3 class="rubric-title">Appropriate Length &amp; Density</h3>
+          <p class="rubric-pass-rule">
+            Word count between 700 and 1,800 words. Short paragraphs (&lt;120 words), bullet points, and markdown callouts for high scannability.
+          </p>
+          <div class="rubric-badges">
+            <span class="badge badge-pass">PASS: 700–1800 Words</span>
+            <span class="badge badge-fail">FAIL: Monolithic Wall of Text</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. GOLDEN LESSON READER MODE -->
+  <section class="section-block" id="lesson">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Final Passing Deliverable</div>
+        <h2 class="section-heading">Lesson Reader: Introduction to RAG</h2>
+        <p class="section-subtitle">
+          Explore the exact generated lesson that cleared all 7 checkpoints with 100% binary approval.
+        </p>
+      </div>
+
+      <div class="reader-container">
+        <div class="reader-top-bar">
+          <div class="reader-meta-item">
+            <span>📚</span>
+            <span>Target: 12th Grade Indian Graduate</span>
+          </div>
+          <div class="reader-meta-item">
+            <span>⏱️</span>
+            <span>Reading Time: 6 Mins (1,050 words)</span>
+          </div>
+          <div class="reader-meta-item">
+            <span class="badge badge-pass">✓ 7/7 Checkpoints Passed</span>
+          </div>
+        </div>
+
+        <article class="reader-content">
+          <h1 class="reader-h1">Introduction to RAG (Retrieval-Augmented Generation)</h1>
+          <p class="reader-lead">
+            Imagine preparing for a tough exam. Would you rather memorize an entire encyclopedia, or take an open-book exam where you can quickly look up the exact formula you need? Let's discover why modern AI works best with an open book!
+          </p>
+
+          <h2 class="reader-h2">1. The Problem with Normal AI (The Memory Trap)</h2>
+          <p class="reader-p">
+            Meet <strong>Rahul</strong>. Rahul is asking a popular AI chatbot for the cutoff marks of Delhi University admissions announced this morning. The AI confidently replies with an outdated number from two years ago! Why does this happen?
+          </p>
+
+          <p class="reader-p">
+            Normal Large Language Models (<strong>LLMs</strong> — computer programs trained on massive amounts of text) have two major limitations:
+          </p>
+          <p class="reader-p">
+            1. <strong>Knowledge Cutoff:</strong> Their training stops on a specific date. They do not know what happened this morning.<br>
+            2. <strong>Hallucinations:</strong> When they do not know an answer, they might make up convincing-sounding fake information.<br>
+            3. <strong>No Private Company Knowledge:</strong> They cannot read your personal college notes or private company PDFs.
+          </p>
+
+          <div class="callout-box">
+            <div class="callout-title">💡 The Core Real-World Analogy: Closed-Book vs. Open-Book Exam</div>
+            <div class="callout-body">
+              <strong>Normal AI = Closed-Book Exam:</strong> The student must answer strictly from memory. If memory fails, they guess.<br>
+              <strong>RAG AI = Open-Book Exam:</strong> The student is allowed a textbook. When a question arrives, they find the exact page first, read the facts, and write an accurate answer.
+            </div>
+          </div>
+
+          <h2 class="reader-h2">2. What is RAG? (In Simple Words)</h2>
+          <p class="reader-p">
+            <strong>RAG</strong> stands for <strong>Retrieval-Augmented Generation</strong>. Let's break down these three words:
+          </p>
+
+          <table class="analogy-comparison-table">
+            <thead>
+              <tr>
+                <th>Stage</th>
+                <th>Action</th>
+                <th>Everyday Analogy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1. Retrieve</strong></td>
+                <td>Search external files for relevant notes.</td>
+                <td>Opening the textbook to the index page.</td>
+              </tr>
+              <tr>
+                <td><strong>2. Augment</strong></td>
+                <td>Attach those notes to the user's question.</td>
+                <td>Handing the student both the question paper and open textbook.</td>
+              </tr>
+              <tr>
+                <td><strong>3. Generate</strong></td>
+                <td>The AI reads both and generates the final answer.</td>
+                <td>Writing down the factual, grounded answer.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="callout-box">
+            <div class="callout-title">⚠️ Crucial Rule: RAG Does NOT Retrain the Model</div>
+            <div class="callout-body">
+              RAG does <strong>not</strong> change the AI's internal computer brain or retrain its weights. It simply passes relevant paragraphs to the AI during the prompt at inference time!
+            </div>
+          </div>
+
+          <h2 class="reader-h2">3. Step-by-Step Worked Example: Indian College Admissions</h2>
+          <p class="reader-p">
+            Suppose Priya asks the college bot: <em>"What is the last date to submit the B.Tech application form?"</em>
+          </p>
+          <p class="reader-p">
+            <strong>Step 1 (Retrieve):</strong> The system scans the college's latest PDF circular stored in a <strong>Vector Database</strong> (a digital smart filing cabinet). It extracts: <em>"B.Tech submission deadline is August 31, 2026."</em><br>
+            <strong>Step 2 (Augment):</strong> It creates an augmented prompt: <em>"Using only this official notice [Notice text], answer Priya's question."</em><br>
+            <strong>Step 3 (Generate):</strong> The AI responds: <em>"The last date for Priya's B.Tech application is August 31, 2026."</em> Zero guesswork, 100% factual accuracy!
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. SYSTEM ARCHITECTURE & DIAGRAMS -->
+  <section class="section-block" id="architecture">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">System Visualizations</div>
+        <h2 class="section-heading">Architecture &amp; Self-Evolution Lifecycle</h2>
+        <p class="section-subtitle">
+          Inspect the complete technical blueprints, from the LangGraph cyclic state machine to the persistent SQLite learning loop.
+        </p>
+      </div>
+
+      <div class="diagram-tab-controls">
+        <button class="tab-btn active" onclick="switchDiagram('arch')">1. System Architecture</button>
+        <button class="tab-btn" onclick="switchDiagram('rubric')">2. Rubric Evaluation Matrix</button>
+        <button class="tab-btn" onclick="switchDiagram('evolution')">3. Self-Evolution Loop</button>
+      </div>
+
+      <div class="diagram-display-card">
+        <div class="diagram-img-frame">
+          <img id="diagramImage" src="assets/diagrams/system-architecture.svg" alt="System Architecture Diagram">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. FLOATING TWEAKS PANEL (Emil Kowalski Style) -->
+  <button class="tweaks-toggle-btn" id="tweaksToggleBtn">
+    <span>⚙️</span>
+    <span>Tweaks</span>
+  </button>
+
+  <div class="tweaks-panel" id="tweaksPanel">
+    <div class="tweaks-header">
+      <span class="tweaks-title">Design &amp; Demo Tweaks</span>
+      <button id="closeTweaksBtn" style="color:var(--text-muted); font-size:1.1rem;">✕</button>
+    </div>
+
+    <div class="tweaks-control-row">
+      <label class="tweaks-label">THEME REGISTER</label>
+      <select class="topic-select" style="width:100%;" id="themeSelect">
+        <option value="dark">OLED Midnight Dark (Default)</option>
+        <option value="light">Editorial Warm Light</option>
+      </select>
+    </div>
+
+    <div class="tweaks-control-row">
+      <label class="tweaks-label">SIMULATION SPEED</label>
+      <select class="topic-select" style="width:100%;" id="speedSelect">
+        <option value="normal">Normal (Realistic Streaming)</option>
+        <option value="fast">Fast Forward (Demo Mode)</option>
+      </select>
+    </div>
+
+    <div class="tweaks-control-row">
+      <label class="tweaks-label">LEARNER VOCABULARY</label>
+      <select class="topic-select" style="width:100%;">
+        <option>12th Grade Indian Graduate (Active)</option>
+        <option>Middle School (Simplified)</option>
+        <option>Engineering Undergraduate</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <p>Built with ❤️ for <strong>NxtWave GenAI Content Systems Engineering</strong>.</p>
+      <p style="margin-top:0.5rem; font-family:var(--font-mono); font-size:0.75rem;">
+        LangGraph • 7-Checkpoint Rubric • SQLite Self-Evolution • Pure Vanilla HTML/CSS/JS
+      </p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       11. Vanilla Interactive JS Engine
+       ========================================================================== -->
+  <script>
+    // Theme Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeSelect = document.getElementById('themeSelect');
+    
+    function setTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
+      if (themeSelect) themeSelect.value = theme;
+      localStorage.setItem('nxtwave_theme', theme);
+    }
+
+    const savedTheme = localStorage.getItem('nxtwave_theme') || 'dark';
+    setTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    if (themeSelect) {
+      themeSelect.addEventListener('change', (e) => setTheme(e.target.value));
+    }
+
+    // Tweaks Panel Toggle
+    const tweaksToggleBtn = document.getElementById('tweaksToggleBtn');
+    const tweaksPanel = document.getElementById('tweaksPanel');
+    const closeTweaksBtn = document.getElementById('closeTweaksBtn');
+
+    tweaksToggleBtn.addEventListener('click', () => {
+      tweaksPanel.classList.toggle('open');
+    });
+
+    closeTweaksBtn.addEventListener('click', () => {
+      tweaksPanel.classList.remove('open');
+    });
+
+    // Diagram Tab Switching
+    function switchDiagram(type) {
+      const img = document.getElementById('diagramImage');
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(b => b.classList.remove('active'));
+
+      if (type === 'arch') {
+        img.src = 'assets/diagrams/system-architecture.svg';
+        buttons[0].classList.add('active');
+      } else if (type === 'rubric') {
+        img.src = 'assets/diagrams/rubric-evaluation-matrix.svg';
+        buttons[1].classList.add('active');
+      } else if (type === 'evolution') {
+        img.src = 'assets/diagrams/self-evolution-loop.svg';
+        buttons[2].classList.add('active');
+      }
+    }
+
+    // Pipeline Live Simulation Streamer
+    const runSimulationBtn = document.getElementById('runSimulationBtn');
+    const terminalScreen = document.getElementById('terminalScreen');
+    const injectErrorToggle = document.getElementById('injectErrorToggle');
+    const stepNodes = [
+      document.getElementById('step1'),
+      document.getElementById('step2'),
+      document.getElementById('step3'),
+      document.getElementById('step4'),
+      document.getElementById('step5')
+    ];
+
+    function clearTerminal() {
+      terminalScreen.innerHTML = '';
+    }
+
+    function addLog(text, type = '') {
+      const line = document.createElement('div');
+      line.className = `log-line ${type}`;
+      line.textContent = text;
+      terminalScreen.appendChild(line);
+      terminalScreen.scrollTop = terminalScreen.scrollHeight;
+    }
+
+    function delay(ms) {
+      const isFast = document.getElementById('speedSelect').value === 'fast';
+      return new Promise(resolve => setTimeout(resolve, isFast ? ms / 3 : ms));
+    }
+
+    async function runAgentSimulation() {
+      runSimulationBtn.disabled = true;
+      runSimulationBtn.style.opacity = '0.6';
+      clearTerminal();
+
+      stepNodes.forEach(node => {
+        node.className = 'step-node-item';
+      });
+
+      const injectError = injectErrorToggle.checked;
+
+      addLog(`>> Initializing LangGraph Engine...`, 'log-coral');
+      addLog(`Topic: Introduction to RAG | Error Injection: ${injectError ? 'TRUE (Deliberate Misconception)' : 'FALSE'}`, 'log-info');
+      await delay(600);
+
+      // STEP 1: Load Memory
+      stepNodes[0].classList.add('active');
+      addLog(`\n>> [Step 1: Memory Manager] Loading SQLite System Memory (data/memory.db)...`, 'log-info');
+      await delay(800);
+      addLog(`✓ Found 2 active evolved guidelines from past runs:`, 'log-success');
+      addLog(`  1. "Always define Vector Database as digital filing cabinet on first use"`, 'log-info');
+      addLog(`  2. "Avoid academic terms like 'stochastic' and 'paradigmatic'"`, 'log-info');
+      stepNodes[0].classList.remove('active');
+      stepNodes[0].classList.add('completed');
+      await delay(500);
+
+      // STEP 2: Generator (Attempt #1)
+      stepNodes[1].classList.add('active');
+      addLog(`\n>> [Step 2: Generator Node] Generating Attempt #1 with 3-Layer Prompt...`, 'log-info');
+      if (injectError) {
+        addLog(`⚠️ INJECTING ERROR: Generator falsely claims RAG retrains model weights!`, 'log-warn');
+      }
+      await delay(1200);
+      addLog(`✓ Candidate Draft #1 generated (1,120 words). Routing to Rubric Evaluator...`, 'log-success');
+      stepNodes[1].classList.remove('active');
+      stepNodes[1].classList.add('completed');
+      await delay(600);
+
+      // STEP 3: Evaluation (Attempt #1)
+      stepNodes[2].classList.add('active');
+      addLog(`\n>> [Step 3: Rubric Evaluator] Running 7 Independent LLM Checks...`, 'log-info');
+      await delay(600);
+
+      if (injectError) {
+        addLog(`❌ Checkpoint 01 [Factual Accuracy]: FAIL`, 'log-error');
+        addLog(`   Diagnosis: Candidate claimed RAG retrains model weights during indexing.`, 'log-warn');
+        addLog(`   Suggestion: Clarify that RAG is purely an inference lookup; model weights remain frozen.`, 'log-warn');
+        addLog(`✓ Checkpoint 02 [Completeness]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 03 [Language Accessibility]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 04 [Relatable Analogy]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 05 [Zero Jargon]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 06 [Teaching Flow]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 07 [Structural Density]: PASS`, 'log-success');
+        
+        stepNodes[2].classList.remove('active');
+        stepNodes[2].classList.add('failed');
+        await delay(800);
+
+        // STEP 4: Router Retry Branch
+        stepNodes[3].classList.add('active');
+        addLog(`\n>> [Step 4: LangGraph Router] Verdict: 1 Checkpoint Failed (Retries Left: 2)`, 'log-coral');
+        addLog(`🔄 Routing to Generator with targeted diagnostic feedback payload...`, 'log-warn');
+        await delay(1000);
+
+        // RE-GENERATION (Attempt #2)
+        stepNodes[1].className = 'step-node-item active';
+        addLog(`\n>> [Attempt #2] Generator regenerating section with diagnostic patch...`, 'log-info');
+        await delay(1200);
+        addLog(`✓ Draft #2 updated: Corrected RAG to frozen inference lookup without retraining.`, 'log-success');
+        stepNodes[1].className = 'step-node-item completed';
+
+        // RE-EVALUATION (Attempt #2)
+        stepNodes[2].className = 'step-node-item active';
+        addLog(`\n>> [Attempt #2 Evaluation] Re-running Rubric Checkpoints...`, 'log-info');
+        await delay(800);
+        addLog(`✓ Checkpoint 01 [Factual Accuracy]: PASS (100% Fixed)`, 'log-success');
+        addLog(`✓ ALL 7 RUBRIC GATES PASSED!`, 'log-success');
+        stepNodes[2].className = 'step-node-item completed';
+      } else {
+        addLog(`✓ Checkpoint 01 [Factual Accuracy]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 02 [Completeness]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 03 [Language Accessibility]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 04 [Relatable Analogy]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 05 [Zero Jargon]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 06 [Teaching Flow]: PASS`, 'log-success');
+        addLog(`✓ Checkpoint 07 [Structural Density]: PASS`, 'log-success');
+        stepNodes[2].classList.remove('active');
+        stepNodes[2].classList.add('completed');
+      }
+
+      // STEP 4: Router Final Pass
+      stepNodes[3].className = 'step-node-item completed';
+      addLog(`\n>> [Step 4: Router] All 7 checkpoints verified. Routing to Persist Memory.`, 'log-success');
+      await delay(600);
+
+      // STEP 5: Persist Memory
+      stepNodes[4].classList.add('active');
+      addLog(`\n>> [Step 5: Memory Persist Node] Persisting Run Artifacts...`, 'log-info');
+      await delay(800);
+      addLog(`📄 Lesson Saved: output/lesson_Introduction_to_RAG.md`, 'log-info');
+      addLog(`📋 Audit Log Saved: output/rejection_log_Introduction_to_RAG.json`, 'log-info');
+      addLog(`🧠 SQLite Self-Evolution updated with run metrics.`, 'log-coral');
+      addLog(`\n✨ PIPELINE EXECUTION FINISHED: READY TO SHIP!`, 'log-success');
+      stepNodes[4].classList.remove('active');
+      stepNodes[4].classList.add('completed');
+
+      runSimulationBtn.disabled = false;
+      runSimulationBtn.style.opacity = '1';
+    }
+
+    runSimulationBtn.addEventListener('click', runAgentSimulation);
+  </script>
+</body>
+</html>
