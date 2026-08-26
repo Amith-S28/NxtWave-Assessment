@@ -3,18 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NxtWave Content Systems — Architecture & System Diagrams</title>
+  <title>NxtWave Content Systems — System Architecture &amp; Diagrams</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0f172a;
-      --card-bg: #1e293b;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent: #ea580c;
-      --border: rgba(148, 163, 184, 0.15);
+      --paper: #f5f5f5;
+      --paper-card: #ffffff;
+      --ink: #2d3142;
+      --muted: #4f5d75;
+      --soft: #7a8399;
+      --accent: #eb6c36;
+      --rule: rgba(45, 49, 66, 0.12);
     }
     * {
       box-sizing: border-box;
@@ -22,11 +23,11 @@
       padding: 0;
     }
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Geist', sans-serif;
-      padding: 2.5rem 1.5rem;
-      line-height: 1.5;
+      background-color: var(--paper);
+      color: var(--ink);
+      font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+      padding: 3rem 1.5rem;
+      line-height: 1.6;
     }
     .container {
       max-width: 1040px;
@@ -34,64 +35,78 @@
     }
     header {
       margin-bottom: 2.5rem;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--rule);
       padding-bottom: 1.5rem;
     }
     .eyebrow {
       font-family: 'Geist Mono', monospace;
-      font-size: 0.8rem;
-      letter-spacing: 0.12em;
+      font-size: 0.75rem;
+      letter-spacing: 0.14em;
       color: var(--accent);
       text-transform: uppercase;
       margin-bottom: 0.5rem;
+      font-weight: 600;
     }
     h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 0.5rem;
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.75rem;
+      font-weight: 400;
+      color: var(--ink);
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
     }
     p.subtitle {
-      color: var(--text-muted);
+      color: var(--muted);
       font-size: 1rem;
+      max-width: 720px;
     }
     .diagram-section {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
+      background: var(--paper-card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.75rem;
       margin-bottom: 2.5rem;
     }
     .section-title {
       font-size: 1.25rem;
       font-weight: 600;
-      margin-bottom: 0.5rem;
+      color: var(--ink);
+      margin-bottom: 0.25rem;
     }
     .section-desc {
-      color: var(--text-muted);
+      color: var(--muted);
       font-size: 0.9rem;
       margin-bottom: 1.25rem;
     }
     .svg-wrapper {
-      background: #ffffff;
-      border-radius: 8px;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 6px;
       padding: 1rem;
       overflow-x: auto;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
     }
-    .svg-wrapper svg {
+    .svg-wrapper object,
+    .svg-wrapper img {
       width: 100%;
       height: auto;
       display: block;
+    }
+    footer {
+      border-top: 1px solid var(--rule);
+      padding-top: 1.5rem;
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--soft);
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="eyebrow">NxtWave Take-Home Assessment Deliverables</div>
-      <h1>System Architecture &amp; Technical Diagrams</h1>
-      <p class="subtitle">Detailed architectural visualizations of the Self-Evaluating Lesson Content Generator.</p>
+      <div class="eyebrow">NxtWave Content Systems Engineering</div>
+      <h1>System Architecture &amp; Rubric Visualizations</h1>
+      <p class="subtitle">Clean, editorial-grade architecture diagrams for the Self-Evaluating Lesson Content Generator.</p>
     </header>
 
     <!-- Diagram 1 -->
@@ -120,6 +135,10 @@
         <object type="image/svg+xml" data="self-evolution-loop.svg"></object>
       </div>
     </section>
+
+    <footer>
+      <span>NxtWave GenAI Content Systems Assessment • Designed with editorial precision</span>
+    </footer>
   </div>
 </body>
 </html>
