@@ -45,8 +45,50 @@ class GeminiClient(LLMClient):
                 "Gemini API key is required. Set GEMINI_API_KEY or GOOGLE_API_KEY in .env"
             )
         self.model = model or Config.GEMINI_MODEL
+        self.fallback_models = [
+            self.model,
+            "gemini-2.5-flash-lite",
+            "gemini-3.5-flash-lite",
+            "gemini-3.5-flash",
+            "gemini-3.6-flash",
+        ]
         from google import genai
         self.client = genai.Client(api_key=self.api_key)
+
+    def _execute_with_fallback(self, func, *args, **kwargs):
+        """Execute a Gemini API call with model fallback and rate-limit backoff."""
+        import time
+        import re
+
+        last_error = None
+        for model in self.fallback_models:
+            for attempt in range(3):
+                try:
+                    return func(model, *args, **kwargs)
+                except Exception as e:
+                    last_error = e
+                    err_str = str(e)
+                    
+                    # Check for rate limit / quota exhaustion
+                    if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                        # Extract suggested retry delay if provided
+                        delay = 12.0
+                        match = re.search(r"retry in (\d+\.?\d*)s", err_str)
+                        if match:
+                            delay = float(match.group(1)) + 1.0
+                        
+                        logger.warning(
+                            f"Rate limit on model '{model}'. Sleeping {delay:.1f}s before retry (Attempt {attempt+1}/3)..."
+                        )
+                        time.sleep(delay)
+                        continue
+                    elif "404" in err_str or "NOT_FOUND" in err_str:
+                        logger.warning(f"Model '{model}' not available (404). Falling back to next model...")
+                        break
+                    else:
+                        raise e
+
+        raise last_error
 
     def generate_text(
         self,
@@ -56,16 +98,19 @@ class GeminiClient(LLMClient):
     ) -> str:
         from google.genai import types
 
-        config = types.GenerateContentConfig(
-            temperature=temperature,
-            system_instruction=system_instruction if system_instruction else None,
-        )
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-            config=config,
-        )
-        return response.text or ""
+        def _call(model):
+            config = types.GenerateContentConfig(
+                temperature=temperature,
+                system_instruction=system_instruction if system_instruction else None,
+            )
+            response = self.client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=config,
+            )
+            return response.text or ""
+
+        return self._execute_with_fallback(_call)
 
     def generate_structured(
         self,
@@ -76,38 +121,40 @@ class GeminiClient(LLMClient):
     ) -> T:
         from google.genai import types
 
-        config = types.GenerateContentConfig(
-            temperature=temperature,
-            system_instruction=system_instruction if system_instruction else None,
-            response_mime_type="application/json",
-            response_schema=response_schema,
-        )
-        response = self.client.models.generate_content(
-            model=self.model,
-            contents=prompt,
-            config=config,
-        )
+        def _call(model):
+            config = types.GenerateContentConfig(
+                temperature=temperature,
+                system_instruction=system_instruction if system_instruction else None,
+                response_mime_type="application/json",
+                response_schema=response_schema,
+            )
+            response = self.client.models.generate_content(
+                model=model,
+                contents=prompt,
+                config=config,
+            )
 
-        if hasattr(response, "parsed") and response.parsed is not None:
-            if isinstance(response.parsed, response_schema):
-                return response.parsed
-            elif isinstance(response.parsed, dict):
-                return response_schema.model_validate(response.parsed)
+            if hasattr(response, "parsed") and response.parsed is not None:
+                if isinstance(response.parsed, response_schema):
+                    return response.parsed
+                elif isinstance(response.parsed, dict):
+                    return response_schema.model_validate(response.parsed)
 
-        # Fallback: Parse text JSON
-        text = response.text or "{}"
-        # Strip markdown fences if present
-        clean_text = text.strip()
-        if clean_text.startswith("```json"):
-            clean_text = clean_text[7:]
-        if clean_text.startswith("```"):
-            clean_text = clean_text[3:]
-        if clean_text.endswith("```"):
-            clean_text = clean_text[:-3]
-        clean_text = clean_text.strip()
+            # Fallback: Parse text JSON
+            text = response.text or "{}"
+            clean_text = text.strip()
+            if clean_text.startswith("```json"):
+                clean_text = clean_text[7:]
+            if clean_text.startswith("```"):
+                clean_text = clean_text[3:]
+            if clean_text.endswith("```"):
+                clean_text = clean_text[:-3]
+            clean_text = clean_text.strip()
 
-        data = json.loads(clean_text)
-        return response_schema.model_validate(data)
+            data = json.loads(clean_text)
+            return response_schema.model_validate(data)
+
+        return self._execute_with_fallback(_call)
 
 
 class OpenAIClient(LLMClient):

@@ -65,6 +65,11 @@ def evaluator_node(
                 f"  ACTIONABLE FIX: {result_dict['suggestion']}"
             )
 
+        # Gentle pacing between evaluator calls to respect free-tier RPM burst quotas
+        if idx < len(RUBRIC_CHECKPOINTS):
+            import time
+            time.sleep(1.0)
+
     all_passed = len(failed_checkpoints) == 0
 
     # Print clean formatted table to console
