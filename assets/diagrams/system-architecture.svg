@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="100%" height="100%" role="img" aria-labelledby="sys-arch-title sys-arch-desc">
+  <title id="sys-arch-title">NxtWave Content Systems — Agentic Architecture</title>
+  <desc id="sys-arch-desc">Architecture diagram of the Self-Evaluating Lesson Content Generator showing memory loading, generator node with 3-tier prompt, 7-checkpoint rubric evaluator, LangGraph conditional router, and deliverables output.</desc>
+
+  <defs>
+    <!-- Marker definitions -->
+    <marker id="arr-muted" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#64748b"/>
+    </marker>
+    <marker id="arr-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#ea580c"/>
+    </marker>
+    <marker id="arr-link" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2563eb"/>
+    </marker>
+    <marker id="arr-success" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#16a34a"/>
+    </marker>
+  </defs>
+
+  <!-- 1. Canvas Background -->
+  <rect width="960" height="520" fill="#f8fafc" rx="8"/>
+
+  <!-- 2. Header Area -->
+  <text x="40" y="44" fill="#0f172a" font-size="20" font-weight="600" font-family="'Geist', 'Segoe UI', sans-serif">Self-Evaluating Content Generator — Agentic System Architecture</text>
+  <text x="40" y="66" fill="#64748b" font-size="12" font-family="'Geist Mono', monospace">LANGGRAPH STATE MACHINE • 7-DIMENSION HARD RUBRIC • SQLITE SELF-EVOLUTION</text>
+
+  <!-- 3. ZONES (Boundaries) -->
+  <!-- Zone 1: Input & Memory Retrieval -->
+  <rect x="40" y="96" width="220" height="340" rx="8" fill="rgba(30,41,59,0.02)" stroke="rgba(30,41,59,0.12)" stroke-width="1"/>
+  <rect x="56" y="88" width="136" height="16" rx="2" fill="#f8fafc"/>
+  <text x="124" y="100" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.12em">1. INGESTION &amp; MEMORY</text>
+
+  <!-- Zone 2: Stateful Agentic Core -->
+  <rect x="280" y="96" width="400" height="340" rx="8" fill="rgba(30,41,59,0.02)" stroke="rgba(30,41,59,0.12)" stroke-width="1"/>
+  <rect x="296" y="88" width="168" height="16" rx="2" fill="#f8fafc"/>
+  <text x="380" y="100" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.12em">2. STATEFUL AGENTIC CORE</text>
+
+  <!-- Zone 3: Storage & Deliverables -->
+  <rect x="700" y="96" width="220" height="340" rx="8" fill="rgba(30,41,59,0.02)" stroke="rgba(30,41,59,0.12)" stroke-width="1"/>
+  <rect x="716" y="88" width="144" height="16" rx="2" fill="#f8fafc"/>
+  <text x="788" y="100" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle" letter-spacing="0.12em">3. OUTPUTS &amp; SYNTHESIS</text>
+
+  <!-- 4. CONNECTORS (Drawn before node boxes so lines stay in background) -->
+  <!-- Memory to Generator -->
+  <path d="M 232,168 H 304" fill="none" stroke="#2563eb" stroke-width="1.2" marker-end="url(#arr-link)"/>
+  
+  <!-- Topic to Generator -->
+  <path d="M 232,260 Q 268,260 268,220 V 196 Q 268,176 304,176" fill="none" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr-muted)"/>
+
+  <!-- Generator to Evaluator -->
+  <path d="M 480,200 V 244" fill="none" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr-muted)"/>
+
+  <!-- Evaluator to Router -->
+  <path d="M 480,324 V 356" fill="none" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr-muted)"/>
+
+  <!-- Router to Generator (Retry Loop with feedback) -->
+  <path d="M 376,388 H 324 Q 308,388 308,372 V 216 Q 308,200 324,200 H 336" fill="none" stroke="#ea580c" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-accent)"/>
+
+  <!-- Router to Persist Node (Pass) -->
+  <path d="M 584,388 H 716" fill="none" stroke="#16a34a" stroke-width="1.2" marker-end="url(#arr-success)"/>
+
+  <!-- Persist to Deliverables -->
+  <path d="M 820,344 V 300" fill="none" stroke="#64748b" stroke-width="1.2" marker-end="url(#arr-muted)"/>
+  
+  <!-- Persist to Distiller -->
+  <path d="M 820,388 Q 820,412 796,412 H 784" fill="none" stroke="#64748b" stroke-width="1.2"/>
+
+  <!-- Distiller back to Memory Store -->
+  <path d="M 720,412 H 144 Q 120,412 120,396 V 364" fill="none" stroke="#ea580c" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arr-accent)"/>
+
+  <!-- Connector Labels (with opaque mask rects) -->
+  <!-- Memory Injected Label -->
+  <rect x="236" y="152" width="60" height="12" rx="2" fill="#f8fafc"/>
+  <text x="266" y="161" fill="#2563eb" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">PATCHES</text>
+
+  <!-- Candidate Draft Label -->
+  <rect x="444" y="214" width="72" height="12" rx="2" fill="#f8fafc"/>
+  <text x="480" y="223" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">CANDIDATE</text>
+
+  <!-- Retry Loop Label -->
+  <rect x="272" y="290" width="72" height="12" rx="2" fill="#f8fafc"/>
+  <text x="308" y="299" fill="#ea580c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">RETRY + FIX</text>
+
+  <!-- Pass Verdict Label -->
+  <rect x="620" y="374" width="68" height="12" rx="2" fill="#f8fafc"/>
+  <text x="654" y="383" fill="#16a34a" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">ALL PASS</text>
+
+  <!-- 5. NODE BOXES -->
+  <!-- Node: SQLite Memory Store -->
+  <rect x="56" y="128" width="176" height="72" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="1"/>
+  <rect x="64" y="136" width="48" height="12" rx="2" fill="rgba(37,99,235,0.08)" stroke="rgba(37,99,235,0.4)" stroke-width="0.8"/>
+  <text x="88" y="145" fill="#2563eb" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle">MEMORY</text>
+  <text x="144" y="166" fill="#0f172a" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Memory Manager</text>
+  <text x="144" y="184" fill="#64748b" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">SQLite • Evolved Rules</text>
+
+  <!-- Node: Input Spec & Persona -->
+  <rect x="56" y="228" width="176" height="72" rx="6" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <rect x="64" y="236" width="36" height="12" rx="2" fill="transparent" stroke="rgba(100,116,139,0.4)" stroke-width="0.8"/>
+  <text x="82" y="245" fill="#64748b" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle">INPUT</text>
+  <text x="144" y="266" fill="#0f172a" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Topic &amp; Learner Persona</text>
+  <text x="144" y="284" fill="#64748b" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">12th Grade Indian Grad</text>
+
+  <!-- Node: Generator (Focal 1) -->
+  <rect x="304" y="128" width="352" height="72" rx="6" fill="#ffffff" stroke="#0f172a" stroke-width="1.2"/>
+  <rect x="312" y="136" width="60" height="12" rx="2" fill="rgba(15,23,42,0.08)" stroke="rgba(15,23,42,0.4)" stroke-width="0.8"/>
+  <text x="342" y="145" fill="#0f172a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle">GENERATOR</text>
+  <text x="480" y="164" fill="#0f172a" font-size="13" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">3-Layer Lesson Generator Node</text>
+  <text x="480" y="182" fill="#64748b" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Base Persona + Evolved Patches + Retry Diagnostics</text>
+
+  <!-- Node: Rubric Evaluator (Focal 2 - Accent) -->
+  <rect x="304" y="244" width="352" height="80" rx="6" fill="rgba(234,88,12,0.04)" stroke="#ea580c" stroke-width="1.2"/>
+  <rect x="312" y="252" width="56" height="12" rx="2" fill="rgba(234,88,12,0.12)" stroke="rgba(234,88,12,0.5)" stroke-width="0.8"/>
+  <text x="340" y="261" fill="#ea580c" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle">EVALUATOR</text>
+  <text x="480" y="280" fill="#0f172a" font-size="13" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">7-Checkpoint Rubric Judge</text>
+  <text x="480" y="298" fill="#64748b" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Independent LLM Calls • Strict Binary Pass/Fail • Chain-of-Thought</text>
+  <text x="480" y="312" fill="#ea580c" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">Accuracy • Completeness • Language • Analogy • Jargon • Flow • Density</text>
+
+  <!-- Node: LangGraph Router Decision -->
+  <rect x="376" y="356" width="208" height="64" rx="6" fill="#ffffff" stroke="#64748b" stroke-width="1"/>
+  <rect x="384" y="364" width="44" height="12" rx="2" fill="transparent" stroke="rgba(100,116,139,0.4)" stroke-width="0.8"/>
+  <text x="406" y="373" fill="#64748b" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle">ROUTER</text>
+  <text x="480" y="390" fill="#0f172a" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">LangGraph Conditional Edge</text>
+  <text x="480" y="406" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace" text-anchor="middle">All Passed? OR Retries &gt;= Max (2)?</text>
+
+  <!-- Node: Persist & Export -->
+  <rect x="720" y="344" width="180" height="72" rx="6" fill="#ffffff" stroke="#16a34a" stroke-width="1"/>
+  <rect x="728" y="352" width="48" height="12" rx="2" fill="rgba(22,163,74,0.08)" stroke="rgba(22,163,74,0.4)" stroke-width="0.8"/>
+  <text x="752" y="361" fill="#16a34a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle">PERSIST</text>
+  <text x="810" y="380" fill="#0f172a" font-size="12" font-weight="600" font-family="'Geist', sans-serif" text-anchor="middle">Memory Persist Node</text>
+  <text x="810" y="398" fill="#64748b" font-size="9" font-family="'Geist Mono', monospace" text-anchor="middle">Distill Rules • Save Artifacts</text>
+
+  <!-- Node: Final Deliverables -->
+  <rect x="720" y="128" width="180" height="152" rx="6" fill="#ffffff" stroke="#0f172a" stroke-width="1"/>
+  <rect x="728" y="136" width="68" height="12" rx="2" fill="transparent" stroke="rgba(15,23,42,0.4)" stroke-width="0.8"/>
+  <text x="762" y="145" fill="#0f172a" font-size="7" font-family="'Geist Mono', monospace" text-anchor="middle">DELIVERABLES</text>
+  
+  <text x="736" y="174" fill="#0f172a" font-size="11" font-weight="600" font-family="'Geist', sans-serif">📄 Lesson Markdown</text>
+  <text x="736" y="190" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace">output/lesson_*.md</text>
+  
+  <line x1="736" y1="202" x2="884" y2="202" stroke="rgba(30,41,59,0.1)" stroke-width="0.8"/>
+
+  <text x="736" y="222" fill="#0f172a" font-size="11" font-weight="600" font-family="'Geist', sans-serif">📋 Rejection Log</text>
+  <text x="736" y="238" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace">output/rejection_log_*.json</text>
+
+  <line x1="736" y1="250" x2="884" y2="250" stroke="rgba(30,41,59,0.1)" stroke-width="0.8"/>
+  <text x="810" y="268" fill="#16a34a" font-size="8" font-weight="600" font-family="'Geist Mono', monospace" text-anchor="middle">READY FOR PRODUCTION</text>
+
+  <!-- 6. Bottom Legend -->
+  <line x1="40" y1="464" x2="920" y2="464" stroke="rgba(30,41,59,0.12)" stroke-width="0.8"/>
+  <text x="40" y="488" fill="#64748b" font-size="8" font-family="'Geist Mono', monospace" letter-spacing="0.14em">LEGEND</text>
+  
+  <!-- Legend Items -->
+  <circle cx="120" cy="485" r="4" fill="#0f172a"/>
+  <text x="132" y="488" fill="#334155" font-size="9" font-family="'Geist', sans-serif">Execution Flow</text>
+
+  <circle cx="250" cy="485" r="4" fill="#ea580c"/>
+  <text x="262" y="488" fill="#334155" font-size="9" font-family="'Geist', sans-serif">Evaluation &amp; Retry Feedback</text>
+
+  <circle cx="450" cy="485" r="4" fill="#2563eb"/>
+  <text x="462" y="488" fill="#334155" font-size="9" font-family="'Geist', sans-serif">Memory Retrieval</text>
+
+  <circle cx="600" cy="485" r="4" fill="#16a34a"/>
+  <text x="612" y="488" fill="#334155" font-size="9" font-family="'Geist', sans-serif">Successful Pass &amp; Persist</text>
+</svg>

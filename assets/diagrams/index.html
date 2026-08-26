@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NxtWave Content Systems — Architecture & System Diagrams</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #ea580c;
+      --border: rgba(148, 163, 184, 0.15);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Geist', sans-serif;
+      padding: 2.5rem 1.5rem;
+      line-height: 1.5;
+    }
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+    .eyebrow {
+      font-family: 'Geist Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+    .diagram-section {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+    .svg-wrapper {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    }
+    .svg-wrapper svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="eyebrow">NxtWave Take-Home Assessment Deliverables</div>
+      <h1>System Architecture &amp; Technical Diagrams</h1>
+      <p class="subtitle">Detailed architectural visualizations of the Self-Evaluating Lesson Content Generator.</p>
+    </header>
+
+    <!-- Diagram 1 -->
+    <section class="diagram-section">
+      <h2 class="section-title">1. End-to-End Stateful Agentic Architecture</h2>
+      <p class="section-desc">Illustrates the LangGraph cyclic loop, 3-layer prompt generator, 7-checkpoint evaluator, and SQLite persistence.</p>
+      <div class="svg-wrapper">
+        <object type="image/svg+xml" data="system-architecture.svg"></object>
+      </div>
+    </section>
+
+    <!-- Diagram 2 -->
+    <section class="diagram-section">
+      <h2 class="section-title">2. 7-Dimension Hard Pass/Fail Rubric Matrix</h2>
+      <p class="section-desc">Illustrates the isolated evaluation prompts per checkpoint that prevent criterion conflation, terminating at the binary pass/fail gate.</p>
+      <div class="svg-wrapper">
+        <object type="image/svg+xml" data="rubric-evaluation-matrix.svg"></object>
+      </div>
+    </section>
+
+    <!-- Diagram 3 -->
+    <section class="diagram-section">
+      <h2 class="section-title">3. Cross-Run Persistent Self-Evolution Lifecycle</h2>
+      <p class="section-desc">Illustrates how failure patterns from Run N are distilled into permanent SQLite guidelines and proactively injected into Run N+1.</p>
+      <div class="svg-wrapper">
+        <object type="image/svg+xml" data="self-evolution-loop.svg"></object>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

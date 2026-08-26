@@ -25,6 +25,8 @@ This system implements a **self-evaluating agentic loop**:
 
 ## 🏛️ System Architecture
 
+![System Architecture](assets/diagrams/system-architecture.svg)
+
 ```mermaid
 graph TD
     A["🚀 START: Input Topic"] --> B["🧠 Load Memory & Evolved Rules (SQLite)"]
@@ -53,6 +55,8 @@ graph TD
 
 ## 📋 The 7-Dimension Hard Pass/Fail Rubric
 
+![7-Dimension Rubric Evaluation Matrix](assets/diagrams/rubric-evaluation-matrix.svg)
+
 Every candidate lesson must clear all 7 binary gates before being shipped:
 
 | # | Checkpoint | Dimension | Operationalized Pass Criteria (No Partial Credit) | Fail Signals |
@@ -68,6 +72,8 @@ Every candidate lesson must clear all 7 binary gates before being shipped:
 ---
 
 ## 🧠 Self-Evolution & Cross-Run Memory
+
+![Cross-Run Self-Evolution Loop](assets/diagrams/self-evolution-loop.svg)
 
 The system features true self-evolution backed by SQLite (`data/memory.db`):
 
@@ -86,6 +92,12 @@ d:\Projects\NxtWave\
 ├── requirements.txt                          # Pinned dependencies
 ├── .env.example                              # API key configuration template
 ├── .gitignore
+├── assets/
+│   └── diagrams/
+│       ├── index.html                        # Interactive HTML viewer for all diagrams
+│       ├── system-architecture.svg           # Editorial-grade architecture diagram
+│       ├── rubric-evaluation-matrix.svg      # 7-checkpoint rubric evaluation matrix
+│       └── self-evolution-loop.svg           # Cross-run memory evolution lifecycle
 ├── src/
 │   ├── __init__.py
 │   ├── config.py                             # Paths, models, temperatures, environment loader
@@ -133,8 +145,8 @@ d:\Projects\NxtWave\
 ### 2. Clone & Install Dependencies
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/nxtwave-content-generator.git
-cd nxtwave-content-generator
+git clone https://github.com/Amith-S28/NxtWave-Assessment.git
+cd NxtWave-Assessment
 
 # Install dependencies
 pip install -r requirements.txt
@@ -218,7 +230,7 @@ When recording your video demonstration for the assessment submission, follow th
    * Explain the goal: building a production-grade content system that acts as an autonomous editor, not just a one-shot prompt.
    * Highlight the target audience (12th-grade Indian graduate, non-English-medium background).
 2. **Architecture Walkthrough (4 mins)**
-   * Walk through `src/graph.py` and `src/rubric/checkpoints.py`.
+   * Walk through `src/graph.py` and `src/rubric/checkpoints.py` using `assets/diagrams/system-architecture.svg`.
    * Explain why LangGraph stateful cyclic graphs were chosen and why independent evaluator calls prevent criterion conflation.
    * Show the 3-layer generator prompt architecture.
 3. **Live Demonstration 1: Deliberate Error Injection (4 mins)**
@@ -236,9 +248,9 @@ When recording your video demonstration for the assessment submission, follow th
 ---
 
 ## 📄 Deliverable Links
+* **Interactive System Diagrams Viewer:** [`assets/diagrams/index.html`](assets/diagrams/index.html)
 * **Final Passing Lesson:** [`output/lesson_Introduction_to_RAG_reference.md`](output/lesson_Introduction_to_RAG_reference.md)
 * **Detailed Rejection Log:** [`output/rejection_log_Introduction_to_RAG_reference.json`](output/rejection_log_Introduction_to_RAG_reference.json)
-* **Implementation Plan:** Included in project artifacts.
 
 ---
 
