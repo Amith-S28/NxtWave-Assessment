@@ -12,46 +12,50 @@
   
   <style>
     /* ==========================================================================
-       1. Design Tokens & Emil Kowalski Spring Curves
+       1. Design Tokens & Emil Kowalski Spring Curves (4px Grid Conformance)
        ========================================================================== */
     :root {
       --font-display: 'Instrument Serif', Georgia, serif;
       --font-sans: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       --font-mono: 'Geist Mono', 'SFMono-Regular', Consolas, monospace;
 
-      /* Dark Theme (Default) */
+      /* Dark Theme (Default) - WCAG AA Verified Contrast */
       --bg-canvas: #080c14;
       --bg-subtle: #0e1422;
       --bg-card: #131b2c;
       --bg-card-hover: #192338;
-      --bg-elevated: #1d2942;
+      --bg-elevated: #1c273e;
+      --bg-modal: #111827;
       
       --text-primary: #f8fafc;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
+      --text-secondary: #a0aec0;
+      --text-muted: #718096;
       
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-strong: rgba(255, 255, 255, 0.16);
       
-      --accent-coral: #eb6c36;
-      --accent-coral-glow: rgba(235, 108, 54, 0.25);
-      --accent-coral-tint: rgba(235, 108, 54, 0.10);
+      --accent-coral: #ea580c;
+      --accent-coral-glow: rgba(234, 88, 12, 0.28);
+      --accent-coral-tint: rgba(234, 88, 12, 0.12);
       
       --accent-blue: #38bdf8;
-      --accent-blue-tint: rgba(56, 189, 248, 0.10);
+      --accent-blue-tint: rgba(56, 189, 248, 0.12);
       
-      --accent-green: #34d399;
-      --accent-green-tint: rgba(52, 211, 153, 0.10);
+      --accent-green: #10b981;
+      --accent-green-tint: rgba(16, 185, 129, 0.12);
       
-      --radius-sm: 6px;
-      --radius-md: 10px;
+      --accent-red: #ef4444;
+      --accent-red-tint: rgba(239, 68, 68, 0.12);
+
+      --radius-sm: 4px;
+      --radius-md: 8px;
       --radius-lg: 16px;
       --radius-full: 9999px;
 
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-      --shadow-glow: 0 0 30px rgba(235, 108, 54, 0.18);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+      --shadow-glow: 0 0 32px rgba(234, 88, 12, 0.20);
 
       /* Emil Kowalski Animation Easing Curves */
       --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
@@ -65,28 +69,29 @@
       --bg-card: #ffffff;
       --bg-card-hover: #f8fafc;
       --bg-elevated: #ffffff;
+      --bg-modal: #ffffff;
       
       --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #94a3b8;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
       
       --border-subtle: rgba(15, 23, 42, 0.08);
-      --border-strong: rgba(15, 23, 42, 0.16);
+      --border-strong: rgba(15, 23, 42, 0.18);
       
-      --accent-coral: #ea580c;
-      --accent-coral-glow: rgba(234, 88, 12, 0.20);
-      --accent-coral-tint: rgba(234, 88, 12, 0.08);
+      --accent-coral: #c2410c;
+      --accent-coral-glow: rgba(194, 65, 12, 0.22);
+      --accent-coral-tint: rgba(194, 65, 12, 0.08);
       
-      --accent-blue: #0284c7;
-      --accent-blue-tint: rgba(2, 132, 199, 0.08);
+      --accent-blue: #0369a1;
+      --accent-blue-tint: rgba(3, 105, 161, 0.08);
       
-      --accent-green: #059669;
-      --accent-green-tint: rgba(5, 150, 105, 0.08);
+      --accent-green: #047857;
+      --accent-green-tint: rgba(4, 120, 87, 0.08);
       
-      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
-      --shadow-glow: 0 0 30px rgba(234, 88, 12, 0.12);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.14);
+      --shadow-glow: 0 0 32px rgba(194, 65, 12, 0.14);
     }
 
     /* ==========================================================================
@@ -117,6 +122,18 @@
     ::selection {
       background-color: var(--accent-coral);
       color: #ffffff;
+    }
+
+    /* Scroll Progress Bar */
+    .reading-progress-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: var(--accent-coral);
+      z-index: 110;
+      transition: width 80ms linear;
     }
 
     /* Focus States for Accessibility */
@@ -154,11 +171,11 @@
       padding: 0.75rem 0;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      background: rgba(8, 12, 20, 0.65);
+      background: rgba(8, 12, 20, 0.75);
       border-bottom: 1px solid var(--border-subtle);
     }
     [data-theme="light"] .segmented-nav-wrapper {
-      background: rgba(248, 250, 252, 0.75);
+      background: rgba(248, 250, 252, 0.85);
     }
 
     .segmented-control-container {
@@ -253,7 +270,7 @@
       width: 38px;
       height: 38px;
       border-radius: var(--radius-md);
-      background: linear-gradient(135deg, #eb6c36, #d9480f);
+      background: linear-gradient(135deg, #ea580c, #c2410c);
       color: #ffffff;
       font-weight: 700;
       font-size: 1.15rem;
@@ -282,7 +299,7 @@
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     .theme-toggle-btn {
@@ -326,11 +343,36 @@
 
     @media (hover: hover) and (pointer: fine) {
       .btn-primary:hover {
-        background: #ff7843;
+        background: #f97316;
         transform: translateY(-2px);
         box-shadow: 0 6px 20px var(--accent-coral-glow);
       }
       .btn-primary:active {
+        transform: scale(0.97);
+      }
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: transform 160ms var(--ease-out-fast), background 160ms ease-out, border-color 160ms ease-out;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .btn-secondary:hover {
+        background: var(--bg-card-hover);
+        border-color: var(--border-strong);
+        transform: translateY(-1px);
+      }
+      .btn-secondary:active {
         transform: scale(0.97);
       }
     }
@@ -350,7 +392,7 @@
       padding: 0.35rem 0.85rem;
       border-radius: var(--radius-full);
       background: var(--accent-coral-tint);
-      border: 1px solid rgba(235, 108, 54, 0.3);
+      border: 1px solid rgba(234, 88, 12, 0.3);
       color: var(--accent-coral);
       font-family: var(--font-mono);
       font-size: 0.75rem;
@@ -456,7 +498,6 @@
     .section-block {
       padding: 4rem 0;
       border-top: 1px solid var(--border-subtle);
-      transition: opacity 240ms var(--ease-out-fast), transform 240ms var(--ease-out-fast), filter 240ms var(--ease-out-fast);
     }
 
     .section-header {
@@ -618,13 +659,13 @@
     }
 
     .step-node-item.completed {
-      border-color: rgba(52, 211, 153, 0.4);
+      border-color: rgba(16, 185, 129, 0.4);
       background: var(--accent-green-tint);
     }
 
     .step-node-item.failed {
       border-color: rgba(239, 68, 68, 0.4);
-      background: rgba(239, 68, 68, 0.08);
+      background: var(--accent-red-tint);
     }
 
     .step-icon-badge {
@@ -710,12 +751,12 @@
     }
     .dot-red { background: #ef4444; }
     .dot-yellow { background: #eab308; }
-    .dot-green { background: #22c55e; }
+    .dot-green { background: #10b981; }
 
     .terminal-title {
       font-family: var(--font-mono);
       font-size: 0.75rem;
-      color: #64748b;
+      color: #718096;
     }
 
     .terminal-screen {
@@ -733,10 +774,10 @@
       word-break: break-all;
     }
     .log-info { color: #38bdf8; }
-    .log-success { color: #34d399; }
+    .log-success { color: #10b981; }
     .log-warn { color: #fbbf24; }
     .log-error { color: #f87171; }
-    .log-coral { color: #eb6c36; font-weight: 600; }
+    .log-coral { color: var(--accent-coral); font-weight: 600; }
 
     .typewriter-cursor {
       display: inline-block;
@@ -785,8 +826,8 @@
     }
 
     .rubric-card.focal-card {
-      border-color: rgba(235, 108, 54, 0.4);
-      background: linear-gradient(180deg, var(--bg-card), rgba(235, 108, 54, 0.04));
+      border-color: rgba(234, 88, 12, 0.4);
+      background: linear-gradient(180deg, var(--bg-card), rgba(234, 88, 12, 0.04));
     }
 
     @media (hover: hover) and (pointer: fine) {
@@ -859,17 +900,17 @@
     .badge-pass {
       background: var(--accent-green-tint);
       color: var(--accent-green);
-      border: 1px solid rgba(52, 211, 153, 0.3);
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
     .badge-fail {
-      background: rgba(239, 68, 68, 0.1);
+      background: var(--accent-red-tint);
       color: #f87171;
       border: 1px solid rgba(239, 68, 68, 0.3);
     }
 
     /* ==========================================================================
-       9. Golden Lesson Reader Mode
+       9. Golden Lesson Reader Mode & Interactive Quiz
        ========================================================================== */
     .reader-container {
       background: var(--bg-card);
@@ -984,8 +1025,268 @@
       text-transform: uppercase;
     }
 
+    /* Interactive 12th-Grade Quiz Block */
+    .quiz-card-wrapper {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin: 3rem 0 1rem;
+    }
+
+    .quiz-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .quiz-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-question-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .quiz-q-text {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .quiz-opt-btn {
+      padding: 0.65rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      text-align: left;
+      transition: transform 160ms var(--ease-out-fast), background 160ms ease-out, border-color 160ms ease-out;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .quiz-opt-btn:hover {
+        border-color: var(--border-strong);
+        color: var(--text-primary);
+        transform: translateX(3px);
+      }
+      .quiz-opt-btn:active {
+        transform: scale(0.98);
+      }
+    }
+
+    .quiz-opt-btn.correct {
+      background: var(--accent-green-tint);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      font-weight: 600;
+    }
+
+    .quiz-opt-btn.incorrect {
+      background: var(--accent-red-tint);
+      border-color: var(--accent-red);
+      color: #f87171;
+    }
+
+    .quiz-feedback-box {
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-sm);
+      display: none;
+      animation: fadeIn 200ms var(--ease-out-fast);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* ==========================================================================
-       10. Architecture & Diagram Visualizer Tab Section
+       10. Rejection Log & Diff Studio Modal
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(4, 7, 12, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 220ms var(--ease-drawer), visibility 220ms var(--ease-drawer);
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-dialog {
+      width: 100%;
+      max-width: 1120px;
+      max-height: 90vh;
+      background: var(--bg-modal);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: scale(0.95) translateY(12px);
+      transition: transform 240ms var(--ease-drawer);
+    }
+
+    .modal-backdrop.open .modal-dialog {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.75rem;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .modal-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 160ms var(--ease-out-fast), background 160ms ease-out;
+    }
+    .modal-close-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-primary);
+      transform: scale(1.05);
+    }
+
+    .modal-body {
+      padding: 1.75rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    /* 3-Column Diff Layout */
+    .diff-studio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media (max-width: 960px) {
+      .diff-studio-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .diff-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .diff-card.failed-side {
+      border-color: rgba(239, 68, 68, 0.35);
+      background: linear-gradient(180deg, var(--bg-card), rgba(239, 68, 68, 0.04));
+    }
+
+    .diff-card.diagnostic-side {
+      border-color: rgba(234, 88, 12, 0.35);
+      background: linear-gradient(180deg, var(--bg-card), rgba(234, 88, 12, 0.04));
+    }
+
+    .diff-card.passed-side {
+      border-color: rgba(16, 185, 129, 0.35);
+      background: linear-gradient(180deg, var(--bg-card), rgba(16, 185, 129, 0.04));
+    }
+
+    .diff-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.875rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .diff-card-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .diff-content {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .highlight-err {
+      background: rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      padding: 0.15rem 0.35rem;
+      border-radius: var(--radius-sm);
+      border-bottom: 2px solid #ef4444;
+      font-weight: 500;
+    }
+
+    .highlight-fix {
+      background: rgba(16, 185, 129, 0.2);
+      color: #86efac;
+      padding: 0.15rem 0.35rem;
+      border-radius: var(--radius-sm);
+      border-bottom: 2px solid #10b981;
+      font-weight: 500;
+    }
+
+    /* ==========================================================================
+       11. Architecture & Diagram Visualizer Tab Section
        ========================================================================== */
     .diagram-tab-controls {
       display: flex;
@@ -1037,7 +1338,7 @@
       border-radius: var(--radius-md);
       overflow: hidden;
       border: 1px solid rgba(0, 0, 0, 0.1);
-      transition: filter 240ms var(--ease-out-fast), transform 240ms var(--ease-spring);
+      transition: filter 240ms var(--ease-out-fast), opacity 240ms var(--ease-out-fast);
     }
 
     .diagram-img-frame img {
@@ -1047,7 +1348,7 @@
     }
 
     /* ==========================================================================
-       11. Floating Tweaks Customizer Panel
+       12. Floating Tweaks Customizer Panel
        ========================================================================== */
     .tweaks-toggle-btn {
       position: fixed;
@@ -1070,7 +1371,7 @@
     @media (hover: hover) and (pointer: fine) {
       .tweaks-toggle-btn:hover {
         transform: scale(1.05);
-        background: #ff7843;
+        background: #f97316;
       }
       .tweaks-toggle-btn:active {
         transform: scale(0.96);
@@ -1140,7 +1441,7 @@
     }
 
     /* ==========================================================================
-       12. Accessibility: prefers-reduced-motion
+       13. Accessibility: prefers-reduced-motion
        ========================================================================== */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -1163,6 +1464,9 @@
 </head>
 <body>
 
+  <!-- Top Reading Progress Indicator -->
+  <div class="reading-progress-bar" id="readingProgressBar"></div>
+
   <!-- 1. NAVIGATION -->
   <nav class="navbar">
     <div class="container nav-inner">
@@ -1175,6 +1479,9 @@
       </div>
 
       <div class="nav-actions">
+        <button class="btn-secondary" id="openDiffStudioNavBtn">
+          <span>🔍</span> Diff Studio
+        </button>
         <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">🌙</button>
         <button class="btn-primary" onclick="scrollToSection('playground')">Test Live Agent</button>
       </div>
@@ -1189,7 +1496,7 @@
         <button class="segment-tab active" data-target="hero-view" onclick="switchMainTab(this, 'hero-view')">Overview</button>
         <button class="segment-tab" data-target="playground-view" onclick="switchMainTab(this, 'playground-view')">Live Pipeline Demo</button>
         <button class="segment-tab" data-target="rubric-view" onclick="switchMainTab(this, 'rubric-view')">7-Checkpoint Rubric</button>
-        <button class="segment-tab" data-target="lesson-view" onclick="switchMainTab(this, 'lesson-view')">Lesson Viewer</button>
+        <button class="segment-tab" data-target="lesson-view" onclick="switchMainTab(this, 'lesson-view')">Lesson Viewer &amp; Quiz</button>
         <button class="segment-tab" data-target="architecture-view" onclick="switchMainTab(this, 'architecture-view')">Architecture Blueprint</button>
       </div>
     </div>
@@ -1484,7 +1791,9 @@
             <span>Reading Time: 6 Mins (1,050 words)</span>
           </div>
           <div class="reader-meta-item">
-            <span class="badge badge-pass">✓ 7/7 Checkpoints Passed</span>
+            <button class="btn-primary" style="padding:0.4rem 0.9rem; font-size:0.8rem;" id="openDiffStudioBtn">
+              🔍 Inspect Rejection Diff
+            </button>
           </div>
         </div>
 
@@ -1564,6 +1873,32 @@
             <strong>Step 2 (Augment):</strong> It creates an augmented prompt: <em>"Using only this official notice [Notice text], answer Priya's question."</em><br>
             <strong>Step 3 (Generate):</strong> The AI responds: <em>"The last date for Priya's B.Tech application is August 31, 2026."</em> Zero guesswork, 100% factual accuracy!
           </p>
+
+          <!-- Interactive 12th-Grade Quiz -->
+          <div class="quiz-card-wrapper">
+            <h3 class="quiz-title">🎯 Quick 12th-Grade Checkpoint Quiz</h3>
+            <p class="quiz-subtitle">Test your understanding of RAG in 3 practical questions.</p>
+
+            <!-- Quiz Q1 -->
+            <div class="quiz-question-box" id="quizQ1">
+              <div class="quiz-q-text">1. Does RAG retrain or modify the AI model's internal weights?</div>
+              <div class="quiz-options">
+                <button class="quiz-opt-btn" onclick="checkQuizAnswer(1, 0, false, 'No! RAG leaves weights frozen. It only looks up facts at question time.')">A) Yes, it retrains the AI on new PDFs.</button>
+                <button class="quiz-opt-btn" onclick="checkQuizAnswer(1, 1, true, 'Correct! Model weights remain completely frozen; it looks up facts at inference time.')">B) No, the AI weights remain frozen and facts are passed in the prompt.</button>
+              </div>
+              <div class="quiz-feedback-box" id="quizFeedback1"></div>
+            </div>
+
+            <!-- Quiz Q2 -->
+            <div class="quiz-question-box" id="quizQ2">
+              <div class="quiz-q-text">2. In our exam analogy, what does the external textbook represent?</div>
+              <div class="quiz-options">
+                <button class="quiz-opt-btn" onclick="checkQuizAnswer(2, 0, true, 'Correct! The textbook is your external Vector Database or document repository.')">A) An external Vector Database containing verified documents.</button>
+                <button class="quiz-opt-btn" onclick="checkQuizAnswer(2, 1, false, 'Incorrect. Internal model memory is a closed-book exam.')">B) The AI model\'s internal memory.</button>
+              </div>
+              <div class="quiz-feedback-box" id="quizFeedback2"></div>
+            </div>
+          </div>
         </article>
       </div>
     </div>
@@ -1594,7 +1929,81 @@
     </div>
   </section>
 
-  <!-- 8. FLOATING TWEAKS PANEL (Emil Kowalski Style) -->
+  <!-- 8. REJECTION LOG & DIFF STUDIO MODAL -->
+  <div class="modal-backdrop" id="diffModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span style="font-size:1.25rem;">🔬</span>
+          <div>
+            <div class="modal-title">Lesson Inspection &amp; Rejection Log Studio</div>
+            <div style="font-size:0.75rem; color:var(--text-muted); font-family:var(--font-mono);">
+              Side-by-Side Diagnostic Diff • Attempt #1 vs. Attempt #2
+            </div>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="closeDiffModalBtn" aria-label="Close Diff Studio">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="diff-studio-grid">
+          <!-- Column 1: Failed Attempt #1 -->
+          <div class="diff-card failed-side">
+            <div class="diff-card-header">
+              <span class="diff-card-title">ATTEMPT #1 (FAILED)</span>
+              <span class="badge badge-fail">❌ Checkpoint 01 FAIL</span>
+            </div>
+            <div class="diff-content">
+              <p style="margin-bottom:0.75rem;"><strong>Generated Text Snippet:</strong></p>
+              <p>
+                "When you upload your college circulars, RAG takes these documents and <span class="highlight-err">retrains the AI neural network weights</span> so that the model permanently memorizes your PDFs into its brain."
+              </p>
+              <div style="margin-top:1rem; padding:0.75rem; background:rgba(239,68,68,0.1); border-radius:var(--radius-sm); font-size:0.785rem; color:#fca5a5;">
+                ⚠️ <strong>Error Detected:</strong> Factual Misconception regarding model weight retraining.
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 2: Evaluator Diagnostic & Suggestion -->
+          <div class="diff-card diagnostic-side">
+            <div class="diff-card-header">
+              <span class="diff-card-title">EVALUATOR DIAGNOSTIC</span>
+              <span class="badge" style="background:var(--accent-coral-tint); color:var(--accent-coral);">⚖️ Judge Feedback</span>
+            </div>
+            <div class="diff-content">
+              <p style="margin-bottom:0.6rem;"><strong>Checkpoint 01:</strong> <em>Factual Accuracy &amp; Grounding</em></p>
+              <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:0.85rem;">
+                <strong>Reasoning:</strong> The draft falsely states that RAG retrains internal weights. RAG is strictly an inference-time retrieval mechanism where model weights remain frozen.
+              </p>
+              <div style="padding:0.75rem; background:var(--accent-coral-tint); border-left:3px solid var(--accent-coral); border-radius:0 var(--radius-sm) var(--radius-sm) 0; font-size:0.8rem;">
+                💡 <strong>Actionable Suggestion:</strong>
+                Clarify that RAG acts like an open-book exam: the AI brain is untouched, and external paragraphs are simply pasted into the prompt.
+              </div>
+            </div>
+          </div>
+
+          <!-- Column 3: Fixed Attempt #2 -->
+          <div class="diff-card passed-side">
+            <div class="diff-card-header">
+              <span class="diff-card-title">ATTEMPT #2 (PASSING)</span>
+              <span class="badge badge-pass">✓ Checkpoint 01 PASS</span>
+            </div>
+            <div class="diff-content">
+              <p style="margin-bottom:0.75rem;"><strong>Corrected Text Snippet:</strong></p>
+              <p>
+                "When you upload your college circulars, RAG does <span class="highlight-fix">NOT retrain or alter model weights</span>. Instead, it looks up the exact paragraph at question time and passes it directly to the frozen AI inside the prompt."
+              </p>
+              <div style="margin-top:1rem; padding:0.75rem; background:rgba(16,185,129,0.1); border-radius:var(--radius-sm); font-size:0.785rem; color:#86efac;">
+                ✨ <strong>Outcome:</strong> 100% Factually Grounded. Cleared for production shipping!
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. FLOATING TWEAKS PANEL (Emil Kowalski Style) -->
   <button class="tweaks-toggle-btn" id="tweaksToggleBtn" aria-label="Open Design Tweaks Panel">
     <span>⚙️</span>
     <span>Tweaks</span>
@@ -1643,10 +2052,19 @@
   </footer>
 
   <!-- ==========================================================================
-       13. Interactive JS Engine with Typewriter & Segment Slider
+       14. Interactive JS Engine with Typewriter, Diff Modal & Quiz
        ========================================================================== */
   -->
   <script>
+    // Reading Progress Bar
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      const bar = document.getElementById('readingProgressBar');
+      if (bar) bar.style.width = scrolled + '%';
+    });
+
     // Theme Management
     const themeToggle = document.getElementById('themeToggle');
     const themeSelect = document.getElementById('themeSelect');
@@ -1714,6 +2132,54 @@
         const el = document.getElementById(targetId);
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       }
+    }
+
+    // Rejection Log & Diff Studio Modal Controller
+    const diffModal = document.getElementById('diffModal');
+    const openDiffStudioBtn = document.getElementById('openDiffStudioBtn');
+    const openDiffStudioNavBtn = document.getElementById('openDiffStudioNavBtn');
+    const closeDiffModalBtn = document.getElementById('closeDiffModalBtn');
+
+    function openModal() {
+      diffModal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      diffModal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (openDiffStudioBtn) openDiffStudioBtn.addEventListener('click', openModal);
+    if (openDiffStudioNavBtn) openDiffStudioNavBtn.addEventListener('click', openModal);
+    if (closeDiffModalBtn) closeDiffModalBtn.addEventListener('click', closeModal);
+
+    diffModal.addEventListener('click', (e) => {
+      if (e.target === diffModal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && diffModal.classList.contains('open')) closeModal();
+    });
+
+    // Interactive Quiz Controller
+    function checkQuizAnswer(qNum, optIndex, isCorrect, explanation) {
+      const qBox = document.getElementById(`quizQ${qNum}`);
+      const feedbackBox = document.getElementById(`quizFeedback${qNum}`);
+      const buttons = qBox.querySelectorAll('.quiz-opt-btn');
+
+      buttons.forEach((btn, idx) => {
+        btn.classList.remove('correct', 'incorrect');
+        if (idx === optIndex) {
+          btn.classList.add(isCorrect ? 'correct' : 'incorrect');
+        }
+      });
+
+      feedbackBox.style.display = 'block';
+      feedbackBox.style.background = isCorrect ? 'var(--accent-green-tint)' : 'var(--accent-red-tint)';
+      feedbackBox.style.color = isCorrect ? 'var(--accent-green)' : '#f87171';
+      feedbackBox.style.border = `1px solid ${isCorrect ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`;
+      feedbackBox.innerHTML = `<strong>${isCorrect ? '✓ Correct!' : '✗ Not quite.'}</strong> ${explanation}`;
     }
 
     // Tweaks Panel Toggle
