@@ -12,7 +12,7 @@
   
   <style>
     /* ==========================================================================
-       1. Design Tokens (CSS Variables) - Editorial Dark & Warm Light
+       1. Design Tokens & Emil Kowalski Spring Curves
        ========================================================================== */
     :root {
       --font-display: 'Instrument Serif', Georgia, serif;
@@ -20,11 +20,11 @@
       --font-mono: 'Geist Mono', 'SFMono-Regular', Consolas, monospace;
 
       /* Dark Theme (Default) */
-      --bg-canvas: #090d16;
-      --bg-subtle: #0f1523;
-      --bg-card: #141c2e;
-      --bg-card-hover: #1a243a;
-      --bg-elevated: #1e2a42;
+      --bg-canvas: #080c14;
+      --bg-subtle: #0e1422;
+      --bg-card: #131b2c;
+      --bg-card-hover: #192338;
+      --bg-elevated: #1d2942;
       
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
@@ -43,9 +43,6 @@
       --accent-green: #34d399;
       --accent-green-tint: rgba(52, 211, 153, 0.10);
       
-      --accent-amber: #fbbf24;
-      --accent-amber-tint: rgba(251, 191, 36, 0.10);
-
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
@@ -54,9 +51,12 @@
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
       --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
       --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-      --shadow-glow: 0 0 30px rgba(235, 108, 54, 0.15);
+      --shadow-glow: 0 0 30px rgba(235, 108, 54, 0.18);
 
-      --transition-spring: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      /* Emil Kowalski Animation Easing Curves */
+      --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-out-fast: cubic-bezier(0.23, 1, 0.32, 1);
+      --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
     }
 
     [data-theme="light"] {
@@ -90,7 +90,7 @@
     }
 
     /* ==========================================================================
-       2. Global Reset & Base Styles
+       2. Global Reset & Micro-Interaction Foundations
        ========================================================================== */
     * {
       box-sizing: border-box;
@@ -111,12 +111,18 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       overflow-x: hidden;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      transition: background-color 240ms var(--ease-out-fast), color 240ms var(--ease-out-fast);
     }
 
     ::selection {
       background-color: var(--accent-coral);
       color: #ffffff;
+    }
+
+    /* Focus States for Accessibility */
+    :focus-visible {
+      outline: 2px solid var(--accent-coral);
+      outline-offset: 2px;
     }
 
     a {
@@ -129,6 +135,7 @@
       cursor: pointer;
       border: none;
       background: none;
+      user-select: none;
     }
 
     .container {
@@ -138,7 +145,79 @@
     }
 
     /* ==========================================================================
-       3. Navigation Header
+       3. Responsive Segmented Tab Switcher (Smooth Sliding Pill)
+       ========================================================================== */
+    .segmented-nav-wrapper {
+      position: sticky;
+      top: 70px;
+      z-index: 90;
+      padding: 0.75rem 0;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(8, 12, 20, 0.65);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    [data-theme="light"] .segmented-nav-wrapper {
+      background: rgba(248, 250, 252, 0.75);
+    }
+
+    .segmented-control-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .segmented-control {
+      position: relative;
+      display: inline-flex;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .segment-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      height: calc(100% - 8px);
+      background: var(--accent-coral);
+      border-radius: var(--radius-full);
+      box-shadow: 0 2px 8px var(--accent-coral-glow);
+      transition: transform 260ms var(--ease-drawer), width 260ms var(--ease-drawer);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .segment-tab {
+      position: relative;
+      z-index: 2;
+      padding: 0.45rem 1.15rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-radius: var(--radius-full);
+      transition: color 180ms ease-out, transform 160ms var(--ease-out-fast);
+      white-space: nowrap;
+    }
+
+    .segment-tab.active {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .segment-tab:not(.active):hover {
+        color: var(--text-primary);
+      }
+      .segment-tab:active {
+        transform: scale(0.97);
+      }
+    }
+
+    /* ==========================================================================
+       4. Navigation Header
        ========================================================================== */
     .navbar {
       position: sticky;
@@ -146,12 +225,12 @@
       z-index: 100;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      background: rgba(9, 13, 22, 0.75);
+      background: rgba(8, 12, 20, 0.85);
       border-bottom: 1px solid var(--border-subtle);
-      transition: all 0.3s ease;
+      transition: background 240ms var(--ease-out-fast);
     }
     [data-theme="light"] .navbar {
-      background: rgba(248, 250, 252, 0.85);
+      background: rgba(248, 250, 252, 0.90);
     }
 
     .nav-inner {
@@ -179,6 +258,11 @@
       font-weight: 700;
       font-size: 1.15rem;
       box-shadow: 0 2px 10px var(--accent-coral-glow);
+      transition: transform 200ms var(--ease-out-fast);
+    }
+
+    .brand-badge:hover {
+      transform: scale(1.06) rotate(3deg);
     }
 
     .brand-title {
@@ -193,25 +277,6 @@
       font-size: 0.75rem;
       color: var(--text-muted);
       letter-spacing: 0.05em;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 1.75rem;
-      list-style: none;
-    }
-
-    .nav-link {
-      font-size: 0.9rem;
-      font-weight: 500;
-      color: var(--text-secondary);
-      transition: var(--transition-spring);
-      position: relative;
-    }
-
-    .nav-link:hover {
-      color: var(--text-primary);
     }
 
     .nav-actions {
@@ -231,13 +296,18 @@
       align-items: center;
       justify-content: center;
       font-size: 1.1rem;
-      transition: var(--transition-spring);
+      transition: transform 160ms var(--ease-out-fast), border-color 160ms ease-out;
     }
 
-    .theme-toggle-btn:hover {
-      border-color: var(--border-strong);
-      color: var(--text-primary);
-      transform: translateY(-1px);
+    @media (hover: hover) and (pointer: fine) {
+      .theme-toggle-btn:hover {
+        border-color: var(--border-strong);
+        color: var(--text-primary);
+        transform: translateY(-1px);
+      }
+      .theme-toggle-btn:active {
+        transform: scale(0.94);
+      }
     }
 
     .btn-primary {
@@ -250,41 +320,26 @@
       color: #ffffff;
       font-size: 0.875rem;
       font-weight: 600;
-      transition: var(--transition-spring);
       box-shadow: 0 2px 12px var(--accent-coral-glow);
+      transition: transform 160ms var(--ease-out-fast), background 160ms ease-out, box-shadow 160ms ease-out;
     }
 
-    .btn-primary:hover {
-      background: #ff7843;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 20px var(--accent-coral-glow);
-    }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.25rem;
-      border-radius: var(--radius-md);
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: var(--transition-spring);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border-strong);
-      transform: translateY(-1px);
+    @media (hover: hover) and (pointer: fine) {
+      .btn-primary:hover {
+        background: #ff7843;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px var(--accent-coral-glow);
+      }
+      .btn-primary:active {
+        transform: scale(0.97);
+      }
     }
 
     /* ==========================================================================
-       4. Hero Section
+       5. Hero Section
        ========================================================================== */
     .hero-section {
-      padding: 5rem 0 3.5rem;
+      padding: 4.5rem 0 3.5rem;
       position: relative;
     }
 
@@ -303,6 +358,10 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin-bottom: 1.5rem;
+      transition: transform 200ms var(--ease-out-fast);
+    }
+    .hero-eyebrow-chip:hover {
+      transform: translateY(-1px);
     }
 
     .pulse-dot {
@@ -356,25 +415,17 @@
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 1.5rem;
-      transition: var(--transition-spring);
+      transition: transform 220ms var(--ease-spring), border-color 200ms ease-out, box-shadow 220ms var(--ease-spring);
       position: relative;
       overflow: hidden;
     }
 
-    .kpi-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, var(--border-strong), transparent);
-    }
-
-    .kpi-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--border-strong);
-      box-shadow: var(--shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      .kpi-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--border-strong);
+        box-shadow: var(--shadow-md);
+      }
     }
 
     .kpi-value {
@@ -400,15 +451,16 @@
     }
 
     /* ==========================================================================
-       5. Section Container & Headers
+       6. Section Headers & Views
        ========================================================================== */
     .section-block {
-      padding: 4.5rem 0;
+      padding: 4rem 0;
       border-top: 1px solid var(--border-subtle);
+      transition: opacity 240ms var(--ease-out-fast), transform 240ms var(--ease-out-fast), filter 240ms var(--ease-out-fast);
     }
 
     .section-header {
-      margin-bottom: 2.75rem;
+      margin-bottom: 2.5rem;
     }
 
     .section-tag {
@@ -437,7 +489,7 @@
     }
 
     /* ==========================================================================
-       6. Interactive Pipeline Playground Studio
+       7. Interactive Pipeline Playground Studio
        ========================================================================== */
     .playground-box {
       background: var(--bg-card);
@@ -475,7 +527,7 @@
       border-radius: var(--radius-md);
       outline: none;
       cursor: pointer;
-      transition: var(--transition-spring);
+      transition: border-color 160ms ease-out;
     }
 
     .topic-select:focus {
@@ -490,6 +542,10 @@
       font-size: 0.85rem;
       color: var(--text-secondary);
       user-select: none;
+      transition: color 160ms ease-out;
+    }
+    .toggle-switch-label:hover {
+      color: var(--text-primary);
     }
 
     .toggle-switch {
@@ -499,7 +555,7 @@
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-full);
-      transition: var(--transition-spring);
+      transition: background 200ms var(--ease-out-fast), border-color 200ms var(--ease-out-fast);
     }
 
     .toggle-switch::after {
@@ -511,7 +567,7 @@
       height: 16px;
       background: #ffffff;
       border-radius: 50%;
-      transition: var(--transition-spring);
+      transition: transform 220ms var(--ease-drawer);
     }
 
     input[type="checkbox"]:checked + .toggle-switch {
@@ -551,14 +607,14 @@
       border-radius: var(--radius-md);
       background: var(--bg-subtle);
       border: 1px solid var(--border-subtle);
-      transition: var(--transition-spring);
+      transition: transform 220ms var(--ease-spring), border-color 200ms ease-out, background 200ms ease-out;
       position: relative;
     }
 
     .step-node-item.active {
       border-color: var(--accent-coral);
       background: var(--accent-coral-tint);
-      transform: translateX(4px);
+      transform: translateX(6px);
     }
 
     .step-node-item.completed {
@@ -584,13 +640,14 @@
       font-family: var(--font-mono);
       font-weight: 600;
       flex-shrink: 0;
-      transition: var(--transition-spring);
+      transition: transform 200ms var(--ease-out-fast), background 200ms ease-out, color 200ms ease-out;
     }
 
     .step-node-item.active .step-icon-badge {
       background: var(--accent-coral);
       color: #ffffff;
-      box-shadow: 0 0 10px var(--accent-coral-glow);
+      transform: scale(1.1);
+      box-shadow: 0 0 12px var(--accent-coral-glow);
     }
 
     .step-node-item.completed .step-icon-badge {
@@ -622,17 +679,18 @@
 
     /* Terminal Console Live Stream */
     .terminal-console {
-      background: #080c14;
+      background: #060910;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: var(--radius-md);
       display: flex;
       flex-direction: column;
       height: 480px;
       overflow: hidden;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
     }
 
     .terminal-header {
-      background: #0f1523;
+      background: #0d1320;
       padding: 0.75rem 1rem;
       display: flex;
       align-items: center;
@@ -680,8 +738,23 @@
     .log-error { color: #f87171; }
     .log-coral { color: #eb6c36; font-weight: 600; }
 
+    .typewriter-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 15px;
+      background: var(--accent-coral);
+      margin-left: 4px;
+      vertical-align: text-bottom;
+      animation: cursorBlink 800ms infinite;
+    }
+
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
     /* ==========================================================================
-       7. 7-Dimension Hard Rubric Grid
+       8. 7-Dimension Hard Rubric Grid (Spring Hover Polish)
        ========================================================================== */
     .rubric-grid {
       display: grid;
@@ -694,15 +767,21 @@
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 1.75rem;
-      transition: var(--transition-spring);
       position: relative;
       cursor: pointer;
+      transform-origin: center;
+      transition: transform 220ms var(--ease-spring), border-color 200ms ease-out, box-shadow 220ms var(--ease-spring);
     }
 
-    .rubric-card:hover {
-      border-color: var(--border-strong);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
+    @media (hover: hover) and (pointer: fine) {
+      .rubric-card:hover {
+        border-color: var(--border-strong);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
+      }
+      .rubric-card:active {
+        transform: scale(0.985);
+      }
     }
 
     .rubric-card.focal-card {
@@ -710,9 +789,11 @@
       background: linear-gradient(180deg, var(--bg-card), rgba(235, 108, 54, 0.04));
     }
 
-    .rubric-card.focal-card:hover {
-      border-color: var(--accent-coral);
-      box-shadow: var(--shadow-glow);
+    @media (hover: hover) and (pointer: fine) {
+      .rubric-card.focal-card:hover {
+        border-color: var(--accent-coral);
+        box-shadow: var(--shadow-glow);
+      }
     }
 
     .rubric-card-header {
@@ -730,6 +811,7 @@
       background: var(--accent-coral-tint);
       padding: 0.2rem 0.6rem;
       border-radius: var(--radius-sm);
+      transition: transform 160ms var(--ease-out-fast);
     }
 
     .rubric-dimension {
@@ -768,6 +850,10 @@
       font-size: 0.725rem;
       padding: 0.25rem 0.65rem;
       border-radius: var(--radius-sm);
+      transition: transform 160ms var(--ease-out-fast);
+    }
+    .badge:hover {
+      transform: translateY(-1px);
     }
 
     .badge-pass {
@@ -783,7 +869,7 @@
     }
 
     /* ==========================================================================
-       8. Golden Lesson Reader Mode
+       9. Golden Lesson Reader Mode
        ========================================================================== */
     .reader-container {
       background: var(--bg-card);
@@ -855,6 +941,12 @@
       border-radius: 0 var(--radius-md) var(--radius-md) 0;
       padding: 1.25rem 1.5rem;
       margin: 1.75rem 0;
+      transition: transform 200ms var(--ease-spring);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .callout-box:hover {
+        transform: translateX(4px);
+      }
     }
 
     .callout-title {
@@ -893,7 +985,7 @@
     }
 
     /* ==========================================================================
-       9. Architecture & Diagram Visualizer Tab Section
+       10. Architecture & Diagram Visualizer Tab Section
        ========================================================================== */
     .diagram-tab-controls {
       display: flex;
@@ -910,7 +1002,18 @@
       color: var(--text-secondary);
       font-size: 0.875rem;
       font-weight: 500;
-      transition: var(--transition-spring);
+      transition: transform 160ms var(--ease-out-fast), background 160ms ease-out, color 160ms ease-out, border-color 160ms ease-out;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .tab-btn:hover {
+        border-color: var(--border-strong);
+        color: var(--text-primary);
+        transform: translateY(-1px);
+      }
+      .tab-btn:active {
+        transform: scale(0.97);
+      }
     }
 
     .tab-btn.active {
@@ -934,6 +1037,7 @@
       border-radius: var(--radius-md);
       overflow: hidden;
       border: 1px solid rgba(0, 0, 0, 0.1);
+      transition: filter 240ms var(--ease-out-fast), transform 240ms var(--ease-spring);
     }
 
     .diagram-img-frame img {
@@ -943,7 +1047,7 @@
     }
 
     /* ==========================================================================
-       10. Floating Tweaks Customizer Panel
+       11. Floating Tweaks Customizer Panel
        ========================================================================== */
     .tweaks-toggle-btn {
       position: fixed;
@@ -960,12 +1064,17 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      transition: var(--transition-spring);
+      transition: transform 160ms var(--ease-out-fast), background 160ms ease-out;
     }
 
-    .tweaks-toggle-btn:hover {
-      transform: scale(1.05);
-      background: #ff7843;
+    @media (hover: hover) and (pointer: fine) {
+      .tweaks-toggle-btn:hover {
+        transform: scale(1.05);
+        background: #ff7843;
+      }
+      .tweaks-toggle-btn:active {
+        transform: scale(0.96);
+      }
     }
 
     .tweaks-panel {
@@ -980,12 +1089,13 @@
       box-shadow: var(--shadow-lg);
       z-index: 998;
       display: none;
-      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: bottom right;
+      animation: tweaksEnter 220ms var(--ease-drawer);
     }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes tweaksEnter {
+      from { opacity: 0; transform: scale(0.95) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .tweaks-panel.open {
@@ -1028,6 +1138,27 @@
       color: var(--text-muted);
       font-size: 0.875rem;
     }
+
+    /* ==========================================================================
+       12. Accessibility: prefers-reduced-motion
+       ========================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      .pulse-dot {
+        animation: none !important;
+      }
+      .typewriter-cursor {
+        animation: none !important;
+      }
+      .kpi-card:hover, .rubric-card:hover, .btn-primary:hover {
+        transform: none !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1043,22 +1174,29 @@
         </div>
       </div>
 
-      <ul class="nav-links">
-        <li><a href="#playground" class="nav-link">Live Playground</a></li>
-        <li><a href="#rubric" class="nav-link">7-Checkpoint Rubric</a></li>
-        <li><a href="#lesson" class="nav-link">Lesson Reader</a></li>
-        <li><a href="#architecture" class="nav-link">Architecture</a></li>
-      </ul>
-
       <div class="nav-actions">
-        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
-        <a href="#playground" class="btn-primary">Test Live Agent</a>
+        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Dark/Light Mode" aria-label="Toggle Theme">🌙</button>
+        <button class="btn-primary" onclick="scrollToSection('playground')">Test Live Agent</button>
       </div>
     </div>
   </nav>
 
-  <!-- 2. HERO SECTION -->
-  <header class="hero-section">
+  <!-- 2. SMOOTH ANIMATED SEGMENTED TAB SWITCHER (Emil Kowalski Pattern) -->
+  <div class="segmented-nav-wrapper">
+    <div class="container segmented-control-container">
+      <div class="segmented-control" id="mainSegmentedNav">
+        <div class="segment-slider" id="segmentSlider"></div>
+        <button class="segment-tab active" data-target="hero-view" onclick="switchMainTab(this, 'hero-view')">Overview</button>
+        <button class="segment-tab" data-target="playground-view" onclick="switchMainTab(this, 'playground-view')">Live Pipeline Demo</button>
+        <button class="segment-tab" data-target="rubric-view" onclick="switchMainTab(this, 'rubric-view')">7-Checkpoint Rubric</button>
+        <button class="segment-tab" data-target="lesson-view" onclick="switchMainTab(this, 'lesson-view')">Lesson Viewer</button>
+        <button class="segment-tab" data-target="architecture-view" onclick="switchMainTab(this, 'architecture-view')">Architecture Blueprint</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. HERO SECTION -->
+  <header class="hero-section" id="hero-view">
     <div class="container">
       <div class="hero-eyebrow-chip">
         <span class="pulse-dot"></span>
@@ -1101,14 +1239,14 @@
     </div>
   </header>
 
-  <!-- 3. INTERACTIVE PLAYGROUND STUDIO -->
-  <section class="section-block" id="playground">
+  <!-- 4. INTERACTIVE PLAYGROUND STUDIO -->
+  <section class="section-block" id="playground-view">
     <div class="container">
       <div class="section-header">
         <div class="section-tag">Interactive Simulation Studio</div>
         <h2 class="section-heading">Test the Agentic Pipeline Live</h2>
         <p class="section-subtitle">
-          Watch the state machine generate content, trigger 7 independent evaluator LLM calls, diagnose issues, and dynamically self-correct.
+          Watch the state machine generate content, trigger 7 independent evaluator LLM calls with typewriter streaming, diagnose issues, and dynamically self-correct.
         </p>
       </div>
 
@@ -1177,7 +1315,7 @@
             </div>
           </div>
 
-          <!-- Live Terminal Output Screen -->
+          <!-- Live Terminal Output Screen (Typewriter Streamer) -->
           <div class="terminal-console">
             <div class="terminal-header">
               <div class="terminal-dots">
@@ -1186,7 +1324,7 @@
                 <span class="dot dot-green"></span>
               </div>
               <div class="terminal-title">agentic_execution_stream.log</div>
-              <div style="font-size:0.75rem; color:#64748b;">LangGraph 1.2</div>
+              <div style="font-size:0.75rem; color:#64748b; font-family:var(--font-mono);">LangGraph 1.2</div>
             </div>
             <div class="terminal-screen" id="terminalScreen">
               <div class="log-line log-info">System idle. Select parameters and click 'Run Agentic Pipeline' to initiate live generation.</div>
@@ -1197,14 +1335,14 @@
     </div>
   </section>
 
-  <!-- 4. THE 7-DIMENSION RUBRIC MATRIX -->
-  <section class="section-block" id="rubric">
+  <!-- 5. THE 7-DIMENSION RUBRIC MATRIX -->
+  <section class="section-block" id="rubric-view">
     <div class="container">
       <div class="section-header">
         <div class="section-tag">Quality Assurance Standard</div>
         <h2 class="section-heading">The 7 Hard Pass/Fail Checkpoints</h2>
         <p class="section-subtitle">
-          Every lesson must clear all 7 binary gates before being shipped. There is zero partial credit or scoring averaging.
+          Every lesson must clear all 7 binary gates before being shipped. Hover or tap to inspect operationalized criteria.
         </p>
       </div>
 
@@ -1324,8 +1462,8 @@
     </div>
   </section>
 
-  <!-- 5. GOLDEN LESSON READER MODE -->
-  <section class="section-block" id="lesson">
+  <!-- 6. GOLDEN LESSON READER MODE -->
+  <section class="section-block" id="lesson-view">
     <div class="container">
       <div class="section-header">
         <div class="section-tag">Final Passing Deliverable</div>
@@ -1431,8 +1569,8 @@
     </div>
   </section>
 
-  <!-- 6. SYSTEM ARCHITECTURE & DIAGRAMS -->
-  <section class="section-block" id="architecture">
+  <!-- 7. SYSTEM ARCHITECTURE & DIAGRAMS -->
+  <section class="section-block" id="architecture-view">
     <div class="container">
       <div class="section-header">
         <div class="section-tag">System Visualizations</div>
@@ -1443,21 +1581,21 @@
       </div>
 
       <div class="diagram-tab-controls">
-        <button class="tab-btn active" onclick="switchDiagram('arch')">1. System Architecture</button>
-        <button class="tab-btn" onclick="switchDiagram('rubric')">2. Rubric Evaluation Matrix</button>
-        <button class="tab-btn" onclick="switchDiagram('evolution')">3. Self-Evolution Loop</button>
+        <button class="tab-btn active" onclick="switchDiagram(this, 'arch')">1. System Architecture</button>
+        <button class="tab-btn" onclick="switchDiagram(this, 'rubric')">2. Rubric Evaluation Matrix</button>
+        <button class="tab-btn" onclick="switchDiagram(this, 'evolution')">3. Self-Evolution Loop</button>
       </div>
 
       <div class="diagram-display-card">
-        <div class="diagram-img-frame">
+        <div class="diagram-img-frame" id="diagramFrame">
           <img id="diagramImage" src="assets/diagrams/system-architecture.svg" alt="System Architecture Diagram">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 7. FLOATING TWEAKS PANEL (Emil Kowalski Style) -->
-  <button class="tweaks-toggle-btn" id="tweaksToggleBtn">
+  <!-- 8. FLOATING TWEAKS PANEL (Emil Kowalski Style) -->
+  <button class="tweaks-toggle-btn" id="tweaksToggleBtn" aria-label="Open Design Tweaks Panel">
     <span>⚙️</span>
     <span>Tweaks</span>
   </button>
@@ -1465,7 +1603,7 @@
   <div class="tweaks-panel" id="tweaksPanel">
     <div class="tweaks-header">
       <span class="tweaks-title">Design &amp; Demo Tweaks</span>
-      <button id="closeTweaksBtn" style="color:var(--text-muted); font-size:1.1rem;">✕</button>
+      <button id="closeTweaksBtn" style="color:var(--text-muted); font-size:1.1rem;" aria-label="Close Tweaks Panel">✕</button>
     </div>
 
     <div class="tweaks-control-row">
@@ -1477,9 +1615,9 @@
     </div>
 
     <div class="tweaks-control-row">
-      <label class="tweaks-label">SIMULATION SPEED</label>
+      <label class="tweaks-label">STREAMING SPEED</label>
       <select class="topic-select" style="width:100%;" id="speedSelect">
-        <option value="normal">Normal (Realistic Streaming)</option>
+        <option value="normal">Realistic Typewriter (Default)</option>
         <option value="fast">Fast Forward (Demo Mode)</option>
       </select>
     </div>
@@ -1505,10 +1643,11 @@
   </footer>
 
   <!-- ==========================================================================
-       11. Vanilla Interactive JS Engine
-       ========================================================================== -->
+       13. Interactive JS Engine with Typewriter & Segment Slider
+       ========================================================================== */
+  -->
   <script>
-    // Theme Toggle
+    // Theme Management
     const themeToggle = document.getElementById('themeToggle');
     const themeSelect = document.getElementById('themeSelect');
     
@@ -1531,6 +1670,52 @@
       themeSelect.addEventListener('change', (e) => setTheme(e.target.value));
     }
 
+    // Segmented Navigation Slider Controller (Emil Kowalski Fluid Physics)
+    const segmentSlider = document.getElementById('segmentSlider');
+    const segmentTabs = document.querySelectorAll('.segment-tab');
+
+    function updateSliderPosition(activeTab) {
+      if (!activeTab || !segmentSlider) return;
+      const leftOffset = activeTab.offsetLeft;
+      const tabWidth = activeTab.offsetWidth;
+      segmentSlider.style.transform = `translateX(${leftOffset - 4}px)`;
+      segmentSlider.style.width = `${tabWidth}px`;
+    }
+
+    // Initialize Slider Position on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      const initialActive = document.querySelector('.segment-tab.active');
+      if (initialActive) updateSliderPosition(initialActive);
+    });
+    window.addEventListener('resize', () => {
+      const initialActive = document.querySelector('.segment-tab.active');
+      if (initialActive) updateSliderPosition(initialActive);
+    });
+
+    function switchMainTab(clickedTab, targetId) {
+      segmentTabs.forEach(t => t.classList.remove('active'));
+      clickedTab.classList.add('active');
+      updateSliderPosition(clickedTab);
+
+      // Scroll smoothly to target section
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        const yOffset = -130;
+        const y = targetElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+      }
+    }
+
+    function scrollToSection(targetId) {
+      const tab = document.querySelector(`[data-target="${targetId}-view"]`);
+      if (tab) {
+        switchMainTab(tab, `${targetId}-view`);
+      } else {
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
     // Tweaks Panel Toggle
     const tweaksToggleBtn = document.getElementById('tweaksToggleBtn');
     const tweaksPanel = document.getElementById('tweaksPanel');
@@ -1544,25 +1729,31 @@
       tweaksPanel.classList.remove('open');
     });
 
-    // Diagram Tab Switching
-    function switchDiagram(type) {
+    // Diagram Tab Switching with Crossfade
+    function switchDiagram(btn, type) {
       const img = document.getElementById('diagramImage');
+      const frame = document.getElementById('diagramFrame');
       const buttons = document.querySelectorAll('.tab-btn');
       buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-      if (type === 'arch') {
-        img.src = 'assets/diagrams/system-architecture.svg';
-        buttons[0].classList.add('active');
-      } else if (type === 'rubric') {
-        img.src = 'assets/diagrams/rubric-evaluation-matrix.svg';
-        buttons[1].classList.add('active');
-      } else if (type === 'evolution') {
-        img.src = 'assets/diagrams/self-evolution-loop.svg';
-        buttons[2].classList.add('active');
-      }
+      frame.style.filter = 'blur(3px)';
+      frame.style.opacity = '0.7';
+
+      setTimeout(() => {
+        if (type === 'arch') {
+          img.src = 'assets/diagrams/system-architecture.svg';
+        } else if (type === 'rubric') {
+          img.src = 'assets/diagrams/rubric-evaluation-matrix.svg';
+        } else if (type === 'evolution') {
+          img.src = 'assets/diagrams/self-evolution-loop.svg';
+        }
+        frame.style.filter = 'blur(0)';
+        frame.style.opacity = '1';
+      }, 140);
     }
 
-    // Pipeline Live Simulation Streamer
+    // Typewriter Streamer Engine
     const runSimulationBtn = document.getElementById('runSimulationBtn');
     const terminalScreen = document.getElementById('terminalScreen');
     const injectErrorToggle = document.getElementById('injectErrorToggle');
@@ -1578,17 +1769,29 @@
       terminalScreen.innerHTML = '';
     }
 
-    function addLog(text, type = '') {
-      const line = document.createElement('div');
-      line.className = `log-line ${type}`;
-      line.textContent = text;
-      terminalScreen.appendChild(line);
-      terminalScreen.scrollTop = terminalScreen.scrollHeight;
-    }
-
     function delay(ms) {
       const isFast = document.getElementById('speedSelect').value === 'fast';
       return new Promise(resolve => setTimeout(resolve, isFast ? ms / 3 : ms));
+    }
+
+    async function typewriteLine(text, cssClass = '', charDelay = 12) {
+      const isFast = document.getElementById('speedSelect').value === 'fast';
+      const actualCharDelay = isFast ? 3 : charDelay;
+
+      const line = document.createElement('div');
+      line.className = `log-line ${cssClass}`;
+      terminalScreen.appendChild(line);
+
+      const cursor = document.createElement('span');
+      cursor.className = 'typewriter-cursor';
+      line.appendChild(cursor);
+
+      for (let i = 0; i < text.length; i++) {
+        cursor.insertAdjacentText('beforebegin', text[i]);
+        terminalScreen.scrollTop = terminalScreen.scrollHeight;
+        await new Promise(r => setTimeout(r, actualCharDelay));
+      }
+      cursor.remove();
     }
 
     async function runAgentSimulation() {
@@ -1602,98 +1805,98 @@
 
       const injectError = injectErrorToggle.checked;
 
-      addLog(`>> Initializing LangGraph Engine...`, 'log-coral');
-      addLog(`Topic: Introduction to RAG | Error Injection: ${injectError ? 'TRUE (Deliberate Misconception)' : 'FALSE'}`, 'log-info');
-      await delay(600);
+      await typewriteLine(`>> Initializing LangGraph Engine...`, 'log-coral', 15);
+      await typewriteLine(`Topic: Introduction to RAG | Error Injection: ${injectError ? 'TRUE (Deliberate Misconception)' : 'FALSE'}`, 'log-info', 10);
+      await delay(400);
 
       // STEP 1: Load Memory
       stepNodes[0].classList.add('active');
-      addLog(`\n>> [Step 1: Memory Manager] Loading SQLite System Memory (data/memory.db)...`, 'log-info');
-      await delay(800);
-      addLog(`✓ Found 2 active evolved guidelines from past runs:`, 'log-success');
-      addLog(`  1. "Always define Vector Database as digital filing cabinet on first use"`, 'log-info');
-      addLog(`  2. "Avoid academic terms like 'stochastic' and 'paradigmatic'"`, 'log-info');
+      await typewriteLine(`\n>> [Step 1: Memory Manager] Loading SQLite System Memory (data/memory.db)...`, 'log-info', 10);
+      await delay(500);
+      await typewriteLine(`✓ Found 2 active evolved guidelines from past runs:`, 'log-success', 10);
+      await typewriteLine(`  1. "Always define Vector Database as digital filing cabinet on first use"`, 'log-info', 8);
+      await typewriteLine(`  2. "Avoid academic terms like 'stochastic' and 'paradigmatic'"`, 'log-info', 8);
       stepNodes[0].classList.remove('active');
       stepNodes[0].classList.add('completed');
-      await delay(500);
+      await delay(400);
 
       // STEP 2: Generator (Attempt #1)
       stepNodes[1].classList.add('active');
-      addLog(`\n>> [Step 2: Generator Node] Generating Attempt #1 with 3-Layer Prompt...`, 'log-info');
+      await typewriteLine(`\n>> [Step 2: Generator Node] Generating Attempt #1 with 3-Layer Prompt...`, 'log-info', 10);
       if (injectError) {
-        addLog(`⚠️ INJECTING ERROR: Generator falsely claims RAG retrains model weights!`, 'log-warn');
+        await typewriteLine(`⚠️ INJECTING ERROR: Generator falsely claims RAG retrains model weights!`, 'log-warn', 10);
       }
-      await delay(1200);
-      addLog(`✓ Candidate Draft #1 generated (1,120 words). Routing to Rubric Evaluator...`, 'log-success');
+      await delay(800);
+      await typewriteLine(`✓ Candidate Draft #1 generated (1,120 words). Routing to Rubric Evaluator...`, 'log-success', 10);
       stepNodes[1].classList.remove('active');
       stepNodes[1].classList.add('completed');
-      await delay(600);
+      await delay(500);
 
       // STEP 3: Evaluation (Attempt #1)
       stepNodes[2].classList.add('active');
-      addLog(`\n>> [Step 3: Rubric Evaluator] Running 7 Independent LLM Checks...`, 'log-info');
-      await delay(600);
+      await typewriteLine(`\n>> [Step 3: Rubric Evaluator] Running 7 Independent LLM Checks...`, 'log-info', 10);
+      await delay(400);
 
       if (injectError) {
-        addLog(`❌ Checkpoint 01 [Factual Accuracy]: FAIL`, 'log-error');
-        addLog(`   Diagnosis: Candidate claimed RAG retrains model weights during indexing.`, 'log-warn');
-        addLog(`   Suggestion: Clarify that RAG is purely an inference lookup; model weights remain frozen.`, 'log-warn');
-        addLog(`✓ Checkpoint 02 [Completeness]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 03 [Language Accessibility]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 04 [Relatable Analogy]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 05 [Zero Jargon]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 06 [Teaching Flow]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 07 [Structural Density]: PASS`, 'log-success');
+        await typewriteLine(`❌ Checkpoint 01 [Factual Accuracy]: FAIL`, 'log-error', 12);
+        await typewriteLine(`   Diagnosis: Candidate claimed RAG retrains model weights during indexing.`, 'log-warn', 8);
+        await typewriteLine(`   Suggestion: Clarify that RAG is purely an inference lookup; model weights remain frozen.`, 'log-warn', 8);
+        await typewriteLine(`✓ Checkpoint 02 [Completeness]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 03 [Language Accessibility]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 04 [Relatable Analogy]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 05 [Zero Jargon]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 06 [Teaching Flow]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 07 [Structural Density]: PASS`, 'log-success', 8);
         
         stepNodes[2].classList.remove('active');
         stepNodes[2].classList.add('failed');
-        await delay(800);
+        await delay(600);
 
         // STEP 4: Router Retry Branch
         stepNodes[3].classList.add('active');
-        addLog(`\n>> [Step 4: LangGraph Router] Verdict: 1 Checkpoint Failed (Retries Left: 2)`, 'log-coral');
-        addLog(`🔄 Routing to Generator with targeted diagnostic feedback payload...`, 'log-warn');
-        await delay(1000);
+        await typewriteLine(`\n>> [Step 4: LangGraph Router] Verdict: 1 Checkpoint Failed (Retries Left: 2)`, 'log-coral', 10);
+        await typewriteLine(`🔄 Routing to Generator with targeted diagnostic feedback payload...`, 'log-warn', 10);
+        await delay(800);
 
         // RE-GENERATION (Attempt #2)
         stepNodes[1].className = 'step-node-item active';
-        addLog(`\n>> [Attempt #2] Generator regenerating section with diagnostic patch...`, 'log-info');
-        await delay(1200);
-        addLog(`✓ Draft #2 updated: Corrected RAG to frozen inference lookup without retraining.`, 'log-success');
+        await typewriteLine(`\n>> [Attempt #2] Generator regenerating section with diagnostic patch...`, 'log-info', 10);
+        await delay(900);
+        await typewriteLine(`✓ Draft #2 updated: Corrected RAG to frozen inference lookup without retraining.`, 'log-success', 10);
         stepNodes[1].className = 'step-node-item completed';
 
         // RE-EVALUATION (Attempt #2)
         stepNodes[2].className = 'step-node-item active';
-        addLog(`\n>> [Attempt #2 Evaluation] Re-running Rubric Checkpoints...`, 'log-info');
-        await delay(800);
-        addLog(`✓ Checkpoint 01 [Factual Accuracy]: PASS (100% Fixed)`, 'log-success');
-        addLog(`✓ ALL 7 RUBRIC GATES PASSED!`, 'log-success');
+        await typewriteLine(`\n>> [Attempt #2 Evaluation] Re-running Rubric Checkpoints...`, 'log-info', 10);
+        await delay(600);
+        await typewriteLine(`✓ Checkpoint 01 [Factual Accuracy]: PASS (100% Fixed)`, 'log-success', 10);
+        await typewriteLine(`✓ ALL 7 RUBRIC GATES PASSED!`, 'log-success', 10);
         stepNodes[2].className = 'step-node-item completed';
       } else {
-        addLog(`✓ Checkpoint 01 [Factual Accuracy]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 02 [Completeness]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 03 [Language Accessibility]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 04 [Relatable Analogy]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 05 [Zero Jargon]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 06 [Teaching Flow]: PASS`, 'log-success');
-        addLog(`✓ Checkpoint 07 [Structural Density]: PASS`, 'log-success');
+        await typewriteLine(`✓ Checkpoint 01 [Factual Accuracy]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 02 [Completeness]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 03 [Language Accessibility]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 04 [Relatable Analogy]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 05 [Zero Jargon]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 06 [Teaching Flow]: PASS`, 'log-success', 8);
+        await typewriteLine(`✓ Checkpoint 07 [Structural Density]: PASS`, 'log-success', 8);
         stepNodes[2].classList.remove('active');
         stepNodes[2].classList.add('completed');
       }
 
       // STEP 4: Router Final Pass
       stepNodes[3].className = 'step-node-item completed';
-      addLog(`\n>> [Step 4: Router] All 7 checkpoints verified. Routing to Persist Memory.`, 'log-success');
-      await delay(600);
+      await typewriteLine(`\n>> [Step 4: Router] All 7 checkpoints verified. Routing to Persist Memory.`, 'log-success', 10);
+      await delay(400);
 
       // STEP 5: Persist Memory
       stepNodes[4].classList.add('active');
-      addLog(`\n>> [Step 5: Memory Persist Node] Persisting Run Artifacts...`, 'log-info');
-      await delay(800);
-      addLog(`📄 Lesson Saved: output/lesson_Introduction_to_RAG.md`, 'log-info');
-      addLog(`📋 Audit Log Saved: output/rejection_log_Introduction_to_RAG.json`, 'log-info');
-      addLog(`🧠 SQLite Self-Evolution updated with run metrics.`, 'log-coral');
-      addLog(`\n✨ PIPELINE EXECUTION FINISHED: READY TO SHIP!`, 'log-success');
+      await typewriteLine(`\n>> [Step 5: Memory Persist Node] Persisting Run Artifacts...`, 'log-info', 10);
+      await delay(500);
+      await typewriteLine(`📄 Lesson Saved: output/lesson_Introduction_to_RAG.md`, 'log-info', 8);
+      await typewriteLine(`📋 Audit Log Saved: output/rejection_log_Introduction_to_RAG.json`, 'log-info', 8);
+      await typewriteLine(`🧠 SQLite Self-Evolution updated with run metrics.`, 'log-coral', 8);
+      await typewriteLine(`\n✨ PIPELINE EXECUTION FINISHED: READY TO SHIP!`, 'log-success', 12);
       stepNodes[4].classList.remove('active');
       stepNodes[4].classList.add('completed');
 
